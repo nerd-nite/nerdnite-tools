@@ -7,7 +7,9 @@ use Carp;
 use Readonly;
 use Data::Dumper;
 
-my $email = CpanelEmail->new(1);
+my $email = CpanelEmail->new();
 
-my $pops = $email->request('listpops');
+my $command = shift || 'listpops';
+
+my $pops = $email->request($command);
 print Dumper($pops);
