@@ -64,10 +64,10 @@ foreach my $external_email (@bosses) {
 sub create_forwarders {
 	my $email   = shift;
 	my $targets = shift;
-	my $NerdNite::Email = NerdNite::Email->new();
+	my $nnEmail = NerdNite::Email->new();
 
 	foreach my $target ( @{$targets} ) {
-		my $result = $NerdNite::Email->addForward( $email => $target );
+		my $result = $nnEmail->addForward( $email => $target );
 		print STDERR Dumper($result);
 	}
 }
