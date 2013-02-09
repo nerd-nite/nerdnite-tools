@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-package CpanelEmail;
+package NerdNite::Email;
 use strict;
 use warnings;
 use cPanel::PublicAPI;
@@ -8,8 +8,10 @@ use Carp;
 use Readonly;
 use Data::Dumper;
 
+Readonly my $DOMAIN => 'nerdnite.com';
+
 sub new {
-    my $class = shift || croak 'Incorrect attempt to instantiate CpanelEmail';
+    my $class = shift || croak 'Incorrect attempt to instantiate NerdNite::Email';
     my $debug = shift || 0;
     my $self = {};
 
@@ -57,6 +59,29 @@ sub api1_request {
          $params, 'json'
      );
      return $self->{json}->decode($result);
+}
+
+sub addForward {
+    my $self   = shift;
+    my $source = shift || carp "Please provide a source email to addForward";
+    my $target = shift || carp "Please provide a target email to addForward";
+
+    my $nerdniter = '';
+
+    if($target =~ qr(([^\@]+)(?:\@$DOMAIN)?)) {
+        $nerdniter = $1;
+    }
+    else {
+        carp "Must provide a nerdnite name or a nerdnite email";
+    }
+
+    my $params = {
+        domain      => 'nerdnite.com',
+        email       => $nerdniter,
+        fwdopt      => 'fwd',
+        fwdemail    => $target
+    };
+    return $self->request('addforward', $params);
 }
 
 1;

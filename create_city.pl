@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use cPanel::PublicAPI;
+use NerdNite::Email;
 use JSON;
 use Carp;
 use Email::Sender::Simple qw(sendmail);
@@ -64,42 +64,10 @@ foreach my $external_email (@bosses) {
 sub create_forwarders {
 	my $email   = shift;
 	my $targets = shift;
-
-	my $params = {
-		domain => 'nerdnite.com',
-		email  => $email,
-	};
-	$params->{fwdopt} = 'fwd';
+	my $NerdNite::Email = NerdNite::Email->new();
 
 	foreach my $target ( @{$targets} ) {
-		$params->{fwdemail} = $target;
-		my $result = send_cpanel_request( 'Email', 'addforward', $params );
+		my $result = $NerdNite::Email->addForward( $email => $target );
 		print STDERR Dumper($result);
 	}
-}
-
-sub send_cpanel_request {
-	state $cp = cPanel::PublicAPI->new(
-		'user'   => 'nerdnite',
-		'pass'   => 's4tgd1tw',
-		'host'   => 'lizziebracken.com',
-		'usessl' => 1,
-		'debug'		=> 1,
-	) || croak "Could not create cPanel connection: $!";
-	state $json = JSON->new->allow_nonref;
-
-	my $module   = shift;
-	my $function = shift;
-	my $params   = shift;
-
-	my $result = $cp->cpanel_api2_request(
-		'cpanel',
-		{
-			'module' => $module,
-			'func'   => $function,
-		},
-		$params, 'json'
-	);
-	print STDERR Dumper($result);
-	return $json->decode($result)->{cpanelresult};
 }

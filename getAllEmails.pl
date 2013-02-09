@@ -2,13 +2,13 @@
 
 use strict;
 use warnings;
-use CpanelEmail;
+use NerdNite::Email;
 use Carp;
 use Readonly;
 use Data::Dumper;
 use Underscore;
 
-my $email = CpanelEmail->new(1);
+my $email = NerdNite::Email->new(1);
 
 my $pops     = $email->request('listpops');
 my $forwards = $email->request('listforwards');

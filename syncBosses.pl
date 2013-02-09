@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use CpanelEmail;
+use NerdNite::Email;
 use Carp;
 use Readonly;
 use Data::Dumper;
@@ -11,7 +11,7 @@ use Log::Log4perl;
 
 Readonly my %IGNORES => map { ("$_\@nerdnite.com" => 1) } (qw(web test sales letters magazine dan_test atx-paypal));
 
-my $email = CpanelEmail->new();
+my $email = NerdNite::Email->new();
 Log::Log4perl::init('./perlLogging.conf');
 
 my $logger = Log::Log4perl->get_logger('com.nerdnite.tools.syncBosses');
@@ -52,14 +52,8 @@ my $toRemove = _->without(\@bossesTargets, @{$emails} );
 $logger->info('Adding missing forwards '.(scalar @$missing));
 _->each($missing, sub {
     my $emailAddress = shift;
-    my $params = {
-        domain      => 'nerdnite.com',
-        email       => 'bosses',
-        fwdopt      => 'fwd',
-        fwdemail    => $emailAddress
-    };
     $logger->info("Adding $emailAddress");
-    my $result = $email->request('addforward', $params);
+    my $result = $NerdNite::Email->addForward( 'bosses' => $emailAddress );
 });
 
 $logger->info('Removing excess forwards '.(scalar @$toRemove));

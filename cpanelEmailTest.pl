@@ -2,12 +2,12 @@
 
 use strict;
 use warnings;
-use CpanelEmail;
+use NerdNite::Email;
 use Carp;
 use Readonly;
 use Data::Dumper;
 
-my $email = CpanelEmail->new();
+my $email = NerdNite::Email->new();
 
 my $command = shift || 'listpops';
 
