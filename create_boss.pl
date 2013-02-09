@@ -10,9 +10,15 @@ use Email::Sender;
 use Email::Sender::Transport::SMTP;
 use Readonly;
 use Data::Dumper;
-use feature 'state';
+use Underscore;
+use Log::Log4perl;
+
 
 Readonly my $DEFAULT_QUOTA => 250;
+
+Log::Log4perl::init('./perlLogging.conf');
+
+my $logger = Log::Log4perl->get_logger('com.nerdnite.tools.create_boss');
 
 my $boss_name = shift || croak "Please provide a boss name: foo -> foo\@nerdnite.com\n";
 my $external  = shift || croak "Please provide an external email address\n";
@@ -26,14 +32,29 @@ if($type eq "M") {
 	croak "Unknown type: $type\n";
 }
 
-create_email($boss_name, $type, [$external]);	
+my $emailChecker = NerdNite::Email->new();
+my $currentEmails = $emailChecker->getAllEmails();
+
+
+if(_->contains($currentEmails, "$boss_name\@nerdnite.com")) {
+    print "$boss_name\@nerdnite.com already exists in the system";
+    exit 1;
+}
+else {
+    create_email($boss_name, $type, [$external]);
+}
+
+
 
 
 sub create_email {
 	my $nn_email        = shift;
 	my $email_type      = shift;
 	my $external_emails = shift;
-	
+
+	$logger->info("Creating email for $nn_email");
+	$logger->info("This will be a $email_type");
+
 	my $message = '';
 	my @notifees;
 
@@ -137,6 +158,7 @@ sub create_forwarders {
 
 	foreach my $target ( @{$targets} ) {
 		$params->{fwdemail} = $target;
+		$logger->info("Creating forward from $email to $target");
 		my $result = $nnEmail->addForward( $email => $target );
 		print STDERR Dumper($result);
 	}

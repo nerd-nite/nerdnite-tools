@@ -8,8 +8,11 @@ use Readonly;
 use Data::Dumper;
 use Underscore;
 use Log::Log4perl;
+use YAML;
 
-Readonly my %IGNORES => map { ("$_\@nerdnite.com" => 1) } (qw(web test sales letters magazine dan_test atx-paypal));
+my $blacklist = YAML::LoadFile('bosses.blacklist.yaml');
+
+Readonly my %IGNORES => map { ("$_\@nerdnite.com" => 1) } @{$blacklist};
 
 my $nnEmail = NerdNite::Email->new();
 Log::Log4perl::init('./perlLogging.conf');

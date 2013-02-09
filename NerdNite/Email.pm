@@ -69,7 +69,7 @@ sub addForward {
 
     my $nerdniter = '';
 
-    if($target =~ qr(([^\@]+)(?:\@$DOMAIN)?)) {
+    if($source =~ qr(([^\@]+)(?:\@$DOMAIN)?)) {
         $nerdniter = $1;
     }
     else {

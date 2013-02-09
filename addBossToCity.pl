@@ -26,7 +26,7 @@ create_forwarders($city, \@bosses);
 my $message = <<"END_OF_MESSAGE";			
 Hello,
 
-We have just created (or updated) a forwarder from $city\@nerdnite.com to all of the bosses of this city.
+We have just created (or updated) a forwarder from $city\@nerdnite.com to this email address, because you're a boss of this city.
 
 You don't have to do anything; just know that emails to your Nerd Nite address will now arrive here. If you do spam filtering, you may need to set up
 a whitelist to let these emails through.
