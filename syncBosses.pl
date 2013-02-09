@@ -58,14 +58,14 @@ _->each($missing, sub {
         fwdopt      => 'fwd',
         fwdemail    => $emailAddress
     };
+    $logger->info("Adding $emailAddress");
     my $result = $email->request('addforward', $params);
-    print Dumper($result);
 });
 
 $logger->info('Removing excess forwards '.(scalar @$toRemove));
 _->each($toRemove, sub {
     my $emailAddress = shift;
     my $params = [ "bosses\@nerdnite.com=$emailAddress"];
+    $logger->info("Removing $emailAddress");
     my $result = $email->api1_request('delforward', $params);
-    print Dumper($result);
 });
