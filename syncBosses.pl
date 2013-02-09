@@ -11,18 +11,16 @@ use Log::Log4perl;
 
 Readonly my %IGNORES => map { ("$_\@nerdnite.com" => 1) } (qw(web test sales letters magazine dan_test atx-paypal));
 
-my $email = NerdNite::Email->new();
+my $nnEmail = NerdNite::Email->new();
 Log::Log4perl::init('./perlLogging.conf');
 
 my $logger = Log::Log4perl->get_logger('com.nerdnite.tools.syncBosses');
 
-$logger->info('Gathering POP accounts');
-my $pops     = $email->request('listpops');
-$logger->info('Gathering Forwarders');
-my $forwards = $email->request('listforwards');
+$logger->info('Generating the list of all email accounts');
+my $emails = $nnEmail->getAllEmails();
 
-
-$logger->info('Filtering Forwarders down to bosses@nerdnite.com');
+$logger->info('Gathering bosses@nerdnite.com Forwarders');
+my $forwards = $nnEmail->request('listforwards');
 my @bossesTargets;
 
 _->each($forwards, sub {
@@ -31,10 +29,6 @@ _->each($forwards, sub {
         push @bossesTargets, $forward->{forward};
     }
 });
-
-$logger->info('Generating the list of all Forward targets');
-my $emails = _->union(_->pluck($pops, 'email'), _->pluck($forwards, 'dest'));
-$emails = _->sort($emails);
 
 $emails = _->filter($emails => sub {
     my $email = shift;
@@ -53,7 +47,7 @@ $logger->info('Adding missing forwards '.(scalar @$missing));
 _->each($missing, sub {
     my $emailAddress = shift;
     $logger->info("Adding $emailAddress");
-    my $result = $NerdNite::Email->addForward( 'bosses' => $emailAddress );
+    my $result = $nnEmail->addForward( 'bosses' => $emailAddress );
 });
 
 $logger->info('Removing excess forwards '.(scalar @$toRemove));
@@ -61,5 +55,5 @@ _->each($toRemove, sub {
     my $emailAddress = shift;
     my $params = [ "bosses\@nerdnite.com=$emailAddress"];
     $logger->info("Removing $emailAddress");
-    my $result = $email->api1_request('delforward', $params);
+    my $result = $nnEmail->api1_request('delforward', $params);
 });

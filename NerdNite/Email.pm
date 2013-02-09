@@ -7,6 +7,7 @@ use JSON;
 use Carp;
 use Readonly;
 use Data::Dumper;
+use Underscore;
 
 Readonly my $DOMAIN => 'nerdnite.com';
 
@@ -84,4 +85,12 @@ sub addForward {
     return $self->request('addforward', $params);
 }
 
+sub getAllEmails {
+    my $self = shift;
+    my $pops     = $self->request('listpops');
+    my $forwards = $self->request('listforwards');
+
+    my $emails = _->union(_->pluck($pops, 'email'), _->pluck($forwards, 'dest'));
+    return _->sort($emails);
+}
 1;
