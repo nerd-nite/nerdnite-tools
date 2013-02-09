@@ -43,4 +43,20 @@ sub request {
     return $self->{json}->decode($result)->{cpanelresult}->{data};
 }
 
+sub api1_request {
+     my $self     = shift;
+     my $function = shift || carp "Must provide a function name to `request`";
+     my $params   = shift || [];
+
+     my $result = $self->{cp}->cpanel_api1_request(
+         'cpanel',
+         {
+             'module' => 'Email',
+             'func'   => $function,
+         },
+         $params, 'json'
+     );
+     return $self->{json}->decode($result);
+}
+
 1;

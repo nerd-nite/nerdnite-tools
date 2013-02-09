@@ -7,13 +7,22 @@ use Carp;
 use Readonly;
 use Data::Dumper;
 use Underscore;
+use Log::Log4perl;
 
-my $email = CpanelEmail->new(1);
+Readonly my %IGNORES => map { ("$_\@nerdnite.com" => 1) } (qw(web test sales letters magazine dan_test atx-paypal));
 
+my $email = CpanelEmail->new();
+Log::Log4perl::init('./perlLogging.conf');
+
+my $logger = Log::Log4perl->get_logger('com.nerdnite.tools.syncBosses');
+
+$logger->info('Gathering POP accounts');
 my $pops     = $email->request('listpops');
+$logger->info('Gathering Forwarders');
 my $forwards = $email->request('listforwards');
 
-my %IGNORES = map { ("$_\@nerdnite.com" => 1) } (qw(web test sales letters magazine dan_test atx-paypal));
+
+$logger->info('Filtering Forwarders down to bosses@nerdnite.com');
 my @bossesTargets;
 
 _->each($forwards, sub {
@@ -23,6 +32,7 @@ _->each($forwards, sub {
     }
 });
 
+$logger->info('Generating the list of all Forward targets');
 my $emails = _->union(_->pluck($pops, 'email'), _->pluck($forwards, 'dest'));
 $emails = _->sort($emails);
 
@@ -34,10 +44,28 @@ $emails = _->filter($emails => sub {
     !$IGNORES{$email};
 });
 
-my $missing = _->without($emails, @bossesTargets);
+$logger->info('Determining the missing emails');
+my $missing  = _->without($emails, @bossesTargets);
+$logger->info('Determining the obselete emails');
+my $toRemove = _->without(\@bossesTargets, @{$emails} );
 
-print Dumper($emails);
+$logger->info('Adding missing forwards '.(scalar @$missing));
+_->each($missing, sub {
+    my $emailAddress = shift;
+    my $params = {
+        domain      => 'nerdnite.com',
+        email       => 'bosses',
+        fwdopt      => 'fwd',
+        fwdemail    => $emailAddress
+    };
+    my $result = $email->request('addforward', $params);
+    print Dumper($result);
+});
 
-print Dumper(\@bossesTargets);
-
-print Dumper($missing);
+$logger->info('Removing excess forwards '.(scalar @$toRemove));
+_->each($toRemove, sub {
+    my $emailAddress = shift;
+    my $params = [ "bosses\@nerdnite.com=$emailAddress"];
+    my $result = $email->api1_request('delforward', $params);
+    print Dumper($result);
+});
