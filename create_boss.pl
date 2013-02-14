@@ -132,6 +132,7 @@ END_OF_MESSAGE
 sub create_mailbox {
 	my $email    = shift;
 	my $password = create_random_password();
+	my $nnEmail = NerdNite::Email->new();
 
 	my $params = {
 		domain   => 'nerdnite.com',
@@ -139,7 +140,7 @@ sub create_mailbox {
 		password => $password,
 		quota    => $DEFAULT_QUOTA
 	};
-	my $result = $NerdNite::Email->request( 'addpop', $params );
+	my $result = $nnEmail->request( 'addpop', $params );
 	print STDERR Dumper($result);
 	
 	return $password;
