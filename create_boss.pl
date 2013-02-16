@@ -23,6 +23,7 @@ my $logger = Log::Log4perl->get_logger('com.nerdnite.tools.create_boss');
 my $boss_name = shift || croak "Please provide a boss name: foo -> foo\@nerdnite.com\n";
 my $external  = shift || croak "Please provide an external email address\n";
 my $type      = shift || '';
+my $skipCheck = shift || 0;
 
 if($type eq "M") {
 	$type = 'mailbox';
@@ -32,8 +33,12 @@ if($type eq "M") {
 	croak "Unknown type: $type\n";
 }
 
+if($skipCheck) {
+    print STDERR "Skipping the check for pre-existing email address\n";
+}
+
 my $emailChecker = NerdNite::Email->new();
-my $currentEmails = $emailChecker->getAllEmails();
+my $currentEmails = $skipCheck ? [] : $emailChecker->getAllEmails();
 
 
 if(_->contains($currentEmails, "$boss_name\@nerdnite.com")) {
@@ -120,7 +125,7 @@ END_OF_MESSAGE
   		my $email = Email::Simple->create(
   			header 	=> [
 			 	To		=> $external_email,
-			 	From	=> 'web@nerdnite.com',
+			 	From	=> 'dan@nerdnite.com',
 			 	Subject	=> 'New Nerd Nite Mailbox',
 			 ],
 			 body	=> $message,
