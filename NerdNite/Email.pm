@@ -85,6 +85,13 @@ sub addForward {
     return $self->request('addforward', $params);
 }
 
+sub getAllMailBoxes {
+    my $self = shift;
+    my $pops     = $self->request('listpops');
+    
+    return _->pluck($pops, 'email');
+}
+
 sub getAllEmails {
     my $self = shift;
     my $pops     = $self->request('listpops');

@@ -1,0 +1,25 @@
+Hello!
+
+You're getting this email because you have a Nerd Nite mailbox. This means that emails that are sent to this address are stored on the nerdnite.com server.
+
+This is going to be changing.
+
+This document, http://bit.ly/12SeLT5, lays out all of the changes and how to implement them at your end.
+
+I'd like to get through this within 7 days. As such, please note the following:
+
+   *** If I don't hear from you within 7 days, I will delete your mailbox ***
+   
+The reason for this is that some of the mailboxes are basically dead.
+ 
+That doesn't mean you *have* to make the move within 7 days. If you need time, just let me know within the 7 day period and we can work it out.
+ 
+If any of the directions are unclear or you hit any snags, I'll work with you to sort things out.
+ 
+If you access and send Nerd Nite emails from you phone, let me know what model it is and I can work with you to get that set up. If you use a client other than Thunderbird and need help setting that up, let me know and I can help you with that.
+ 
+As always, any questions you may have, send them my way!
+ 
+Thanks,
+ 
+Dan
