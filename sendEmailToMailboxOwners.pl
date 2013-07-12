@@ -25,7 +25,7 @@ my $emailChecker = NerdNite::Email->new();
 my $emails = $emailChecker->getAllMailBoxes();
 
 
-#create_email($emails, $message, $logger);
+create_email($emails, $message, $logger);
 
 
 sub create_email {
@@ -42,6 +42,7 @@ sub create_email {
 	});	
 
 	foreach my $emailAddress (@{$recipients}) {
+		next if index($emailAddress, '@') == -1;
 		
 		my $email = Email::Simple->create(
 			header 	=> [
@@ -51,7 +52,7 @@ sub create_email {
 			],
 			body	=> $message,
 		);
-		sendmail($email, { transport => $transport}) or croak  "Mail fail";
+		#sendmail($email, { transport => $transport}) or croak  "Mail fail";
 		$logger->info("Sent email to $emailAddress");
 	}
 }
