@@ -40,11 +40,11 @@ END_OF_MESSAGE
 
 foreach my $external_email (@bosses) {
 	my $transport = Email::Sender::Transport::SMTP->new({
-		host	=> 'lizziebracken.com',
-		port 	=> 465,
+		host		=> 'smtp.gmail.com',
+		port 		=> 465,
 		ssl		=> 1,
-		sasl_username	=> 'dan+nerdnite.com',
-		sasl_password	=> 's4tgd1tw',	
+		sasl_username	=> 'nn.dan.rumney@gmail.com',
+		sasl_password	=> 's4tgd1tw',		
 	});
 	my $email = Email::Simple->create(
 		header 	=> [

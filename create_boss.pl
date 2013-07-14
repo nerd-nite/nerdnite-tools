@@ -44,7 +44,7 @@ else {
 
 
 sub create_email {
-	my $nn_email        = shift
+	my $nn_email        = shift;
 	my $external_emails = shift;
 
 	$logger->info("Creating email for $nn_email");
@@ -73,12 +73,12 @@ END_OF_MESSAGE
 	print STDERR "Sending emails to @notifees\n";
 	foreach my $external_email (@notifees) {
 		my $transport = Email::Sender::Transport::SMTP->new({
-			host	=> 'lizziebracken.com',
-			port 	=> 465,
+			host		=> 'smtp.gmail.com',
+			port 		=> 465,
 			ssl		=> 1,
-			sasl_username	=> 'dan+nerdnite.com',
-			sasl_password	=> 's4tgd1tw',    		
-  		});
+			sasl_username	=> 'nn.dan.rumney@gmail.com',
+			sasl_password	=> 's4tgd1tw',		
+		});
   		my $email = Email::Simple->create(
   			header 	=> [
 			 	To	=> $external_email,
