@@ -31,7 +31,7 @@ We have just created (or updated) a forwarder from $city\@nerdnite.com to this e
 You don't have to do anything; just know that emails to your Nerd Nite address will now arrive here. If you do spam filtering, you may need to set up
 a whitelist to let these emails through.
 
-If you'd like to switch to a dedicated mailbox, just email me at dan\@nerdnite.com and I can switch things over for you.
+If you have any questions, just email me at dan\@nerdnite.com.
 
 Thanks,
 
