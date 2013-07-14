@@ -21,13 +21,16 @@ $citySlug = prompt "x", "How should the city appear in the url?", "", $citySlug;
 my @bosses;
 while(prompt "y", "Do you want to add a boss?" ,"", "") {
     my $bossName = prompt "x", "What is this bosses name", "", "";
-    my $nnEmail;
+    my $nnEmail  = lc $bossName;
+    $nnEmail =~ s/\s*$//g;
+    $nnEmail =~     s/^\s*//g;
+    $nnEmail =~ s/[^a-zA-Z0-9]+/./g;
     do {
-      $nnEmail = prompt "x", "What email address should they have?", 'Just the part before @nerdnite.com', "";
+      $nnEmail = prompt "x", "What email address should they have?", 'Just the part before @nerdnite.com', $nnEmail;
     } while(_->contains($currentEmails,"$nnEmail\@nerdnite.com" ));
 
     my $external = prompt "x", "What is their current email address?", "","";
-    my $type     = prompt "e", "(M)ailbox or (F)orwarder?", "M or F", "F", '([Ff]|[Mm])';
+    my $type     = "F";
 
     push @bosses, {
         name        => $bossName,

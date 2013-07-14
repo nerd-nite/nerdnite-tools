@@ -39,24 +39,23 @@ Dan
 END_OF_MESSAGE
 
 foreach my $external_email (@bosses) {
-		my $transport = Email::Sender::Transport::SMTP->new({
-    		host	=> 'lizziebracken.com',
-    		port 	=> 465,
-    		ssl		=> 1,
-    		sasl_username	=> 'dan+nerdnite.com',
-    		sasl_password	=> 's4tgd1tw',
-    		
-  		});
-  		my $email = Email::Simple->create(
-  			header 	=> [
-			 	To		=> $external_email,
-			 	From	=> 'web@nerdnite.com',
-			 	Subject	=> 'New Nerd Nite Mailbox',
-			 ],
-			 body	=> $message,
-		);
-		
-		sendmail($email, { transport => $transport}) or croak  "Mail fail";
+	my $transport = Email::Sender::Transport::SMTP->new({
+		host	=> 'lizziebracken.com',
+		port 	=> 465,
+		ssl		=> 1,
+		sasl_username	=> 'dan+nerdnite.com',
+		sasl_password	=> 's4tgd1tw',	
+	});
+	my $email = Email::Simple->create(
+		header 	=> [
+			To	=> $external_email,
+			From	=> 'web@nerdnite.com',
+			Subject	=> 'New Nerd Nite Mailbox',
+		 ],
+		 body	=> $message,
+	);
+	
+	sendmail($email, { transport => $transport}) or croak  "Mail fail";
 }
 
 
