@@ -1,0 +1,37 @@
+{
+    "bosses": {
+        "matt.wasowski": {
+            "name": "Matt Wasowski",
+            "email": "nn.matt.wasowski@gmail.com",
+            "aliases": [
+                "matt",
+                "classifieds",
+                "puzzle",
+                "sales",
+                "twitter",
+                "editor",
+                "letters",
+                "love",
+                "magazine"
+            ]
+        },
+        "dan.rumney": {
+            "name": "Dan Rumney",
+            "email": "nn.dan.rumney@gmail.com",
+            "aliases": [
+                "web",
+                "podacast"
+            ]
+        }
+    },
+
+    "cities": {
+        "nyc": {
+            "name": "New York City",
+            "bosses": [
+                "matt.wasowski"
+            ],
+            "aliases": []
+        }
+    }
+}

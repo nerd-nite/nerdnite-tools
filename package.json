@@ -1,0 +1,27 @@
+{
+  "name": "nerdnite-tools",
+  "version": "0.0.9",
+  "description": "Tools for administering the Nerd Nite web server",
+  "main": " ",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dancrumb/nerdnite-tools.git"
+  },
+  "keywords": [
+    "Nerd",
+    "Nite"
+  ],
+  "author": "Dan Rumney <dan@nerdnite.com>",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/dancrumb/nerdnite-tools/issues"
+  },
+  "dependencies": {
+    "lodash": "~2.2.1",
+    "handlebars": "~1.0.12",
+    "mandrill-api": "~1.0.37"
+  }
+}

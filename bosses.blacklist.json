@@ -1,0 +1,27 @@
+{
+    "nonPeople": [
+        "web",
+        "sales",
+        "letters",
+        "magazine",
+        "puzzle",
+        "classifieds",
+        "love",
+        "podcast"
+    ],
+    "testAccounts": [
+        "test",
+        "dan_test"
+    ],
+    "externalAccounts": [
+        "atx-paypal",
+        "paypal",
+        "twitter"
+    ],
+    "nonBosses": [
+        "kain",
+        "ian",
+        "allie",
+        "atx.ambassador"
+    ]
+}
