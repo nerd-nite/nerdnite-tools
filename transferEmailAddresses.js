@@ -20,7 +20,7 @@
     console.log(emailMappings);
 
     _.forEach(emailMappings, function (targets, source) {
-        output.write(source + " " + targets.join(", ") + "\n");
+        output.write(source + " " + targets.join(", \n\t") + "\n");
     });
 
     output.end();
