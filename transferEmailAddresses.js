@@ -6,7 +6,7 @@
         fs = require('fs'),
         template = Handlebars.compile("Email {{dest}} goes to {{forward}}"),
         emailMappings = {},
-        output = fs.createWriteStream('aliases');
+        output = fs.createWriteStream('email_aliases');
 
     _.forEach(_.flatten(emailDetails), function (email) {
         if (email.dest) {
