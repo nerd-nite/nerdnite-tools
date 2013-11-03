@@ -125,6 +125,71 @@
             "aliases": [
                 "the_lamostinator"
             ]
+        },
+        "alexandra.von.kameke": {
+            "name": "Alexandra von Kameke",
+            "email": "alexandravonkameke@yahoo.de",
+            "aliases": [
+                "alexandra"
+            ]
+        },
+        "jorge.mira": {
+            "name": "Jorge Mira",
+            "email": "jorge.mira@usc.es",
+            "aliases": [
+                "jorge"
+            ]
+        },
+        "amber.conville": {
+            "name": "Amber Conville",
+            "email": "crebma@gmail.com",
+            "aliases": [
+                "amber"
+            ]
+        },
+        "nathan.hughes": {
+            "name": "Nathan Hughes",
+            "email": "n@thanhughes.com",
+            "aliases": [
+                "nathan"
+            ]
+        },
+        "becky.briggs": {
+            "name": "Becky Briggs",
+            "email": "briggs6210@gmail.com"
+        },
+        "chris.jury": {
+            "name": "Chris Jury",
+            "email": "jurycp@gmail.com",
+            "aliases": [
+                "chrisj"
+            ]
+        },
+        "christina.comfort": {
+            "name":"Christina Comfort",
+            "email": "ccomfort@hawaii.edu"
+        },
+        "emily.norton": {
+            "name": "Emily Norton",
+            "email": "mlenorton@gmail.com",
+            "aliases": [
+                "emily"
+            ]
+        },
+        "matt.young": {
+            "name": "Matt Young",
+            "email": "iammattyoung@gmail.com"
+        },
+        "ben.curran": {
+            "name": "Ben Curran",
+            "email": "ben@tirohia.net",
+            "aliases": [
+                "benc"
+            ]
+        },
+        "lisa.strover": {
+            "name": "Lisa Strover",
+            "email": "lstr035@aucklanduni.ac.nz"
         }
     },
 
@@ -182,6 +247,49 @@
                 "hadley.lord",
                 "justin.fitins",
                 "liz.lamoste"
+            ]
+        },
+        "santiagodecompostela": {
+            "name": "Santiago de Compostela",
+            "bosses": [
+                "alexandra.von.kameke",
+                "jorge.mira"
+            ]
+        },
+        "detroit": {
+            "name": "Detroit",
+            "bosses": [
+                "amber.conville",
+                "liz.lamoste",
+                "nathan.hughes"
+            ]
+        },
+        "wellington": {
+            "name": "Wellington",
+            "bosses": [
+                "aimee.whitcroft"
+            ]
+        },
+        "honolulu": {
+            "bosses": [
+                "becky.briggs",
+                "chris.jury",
+                "christina.comfort",
+                "emily.norton"
+                ]
+        },
+        "atlanta": {
+            "name": "Atlanta",
+            "bosses": [
+                "matt.young"
+            ]
+        },
+        //auckland@nerdnite.com benc@nerdnite.com, lisa.strover@nerdnite.com
+        "auckland": {
+            "name": "Auckland",
+            "bosses": [
+                "lisa.strover",
+                "ben.curran"
             ]
         }
     }

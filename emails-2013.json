@@ -271,6 +271,14 @@
             "uri_forward": "benc%40nerdnite.com"
         },
         {
+            "html_dest": "benc@nerdnite.com",
+            "dest": "benc@nerdnite.com",
+            "html_forward": "ben@tirohia.net",
+            "forward": "ben@tirohia.net",
+            "uri_dest": "benc%40nerdnite.com",
+            "uri_forward": "ben%40tirohia.net"
+        },
+        {
             "html_dest": "auckland@nerdnite.com",
             "dest": "auckland@nerdnite.com",
             "html_forward": "lisa.strover@nerdnite.com",

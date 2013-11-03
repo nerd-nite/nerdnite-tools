@@ -21,6 +21,7 @@
             }).join(",\n\t");
             cityAliasStrings.push(aliasString);
         });
+        console.info("There are " + cityAliasStrings.length + " cities");
         return cityAliasStrings;
     }
 
@@ -28,10 +29,11 @@
         var bossAliases = [];
         _.forEach(bossesInfo, function (bossInfo, bossName) {
             bossAliases.push(bossName + "@nerdnite.com " + bossInfo.email);
-            _.forEach(bossInfo.aliases, function(alias) {
+            _.forEach(bossInfo.aliases, function (alias) {
                 bossAliases.push(alias + "@nerdnite.com " + bossInfo.email);
             });
         });
+        console.info("There are " + bossAliases.length + " bosses");
         return bossAliases;
     }
 
