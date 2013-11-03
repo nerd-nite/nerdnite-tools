@@ -168,3 +168,5 @@ pip-log.txt
 
 /node_modules
 aliases
+email_aliases
+love_aliases
