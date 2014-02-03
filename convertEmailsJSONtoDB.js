@@ -46,10 +46,7 @@
                             }
                         displayInfo(doc);
                         saveDoc(doc);
-                        if(db) {
-                            
-                        }
-                    })
+                    });
                     if (db) {
                         db.close();
                     }
