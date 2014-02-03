@@ -23,7 +23,15 @@
                         forwards.update(
                             { "_id": doc.id },
                             doc,
-                            { upsert: true }
+                            { upsert: true },
+                            function (err) {
+                                if (err) {
+                                    console.error(err.message);
+                                }
+                                else {
+                                    console.log("Saved");
+                                }
+                            }
                         );
                     };
                 }
