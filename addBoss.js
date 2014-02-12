@@ -33,8 +33,6 @@
         cliArgs         = process.argv.slice(2),
         options;
         
-        console.log(templates);
-
     function usage(messages) {
         var rc = 0;
         if(messages) {
@@ -99,8 +97,7 @@
                 callback(err);
             }
             else {
-                console.log(items);
-                callback(null, items.length > 0); 
+                callback(null, items.length > 0);
             }
         });
     }
@@ -174,6 +171,8 @@
                 callback(err);
             }
             else {
+                console.log(Handlebars.templates.newWPCity(city));
+                console.log(Handlebars.templates.newWPBoss({boss: boss, city: city}));
                 mandrillClient.messages.send({ message: message, async: true});
                 callback(null,result);
             }
@@ -211,6 +210,7 @@
                     callback(err);
                 }
                 else {
+                    console.log(Handlebars.templates.newWPBoss({boss: boss, city: city}));
                     mandrillClient.messages.send({ message: message, async: true});
                     callback(null,result);
                 }
@@ -251,7 +251,6 @@
                 function(err, results) {
                     var newBoss,
                         city = options.city;
-                    console.log(arguments);
                     if(results.internalEmailInUse) {
                         errorOut("'"+internalEmail+"' is already in use");
                     }
