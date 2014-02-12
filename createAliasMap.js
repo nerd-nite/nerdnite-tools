@@ -24,9 +24,11 @@
             else {
                 forwards = db.collection("forwards");
                 forwards.find({}).each( function (err, emailMap) {
-                    console.log(Handlebars.templates.alias(emailMap));
                     if(!emailMap) {
                         db.close();
+                    }
+                    else {
+                        console.log(Handlebars.templates.alias(emailMap));
                     }
                 });
             }
