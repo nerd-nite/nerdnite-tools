@@ -119,6 +119,7 @@ UpgradeLog*.XML
 ############
 .idea/
 *.iml
+atlassian-ide-plugin.xml
 
 ############
 ## Windows

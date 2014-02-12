@@ -109,7 +109,7 @@
         internalEmailInUse(createInternalEmail(city),forwards, callback);
     }
     
-    function createBoss(forwards, name, email) {
+    function createBoss(forwards, name, email, callback) {
         var nnEmail     = createInternalEmail(name),
             bossSlug    = nnEmail.split("@")[0],
             boss = {
@@ -122,71 +122,100 @@
                 text: Handlebars.templates.newBoss(boss),
                 subject: "Created Nerd Nite Boss",
                 from_email: "web@nerdnite.com",
-                to: [
-                    {
-                        email: "dancrumb@gmail.com",
-                        name: "Dan Rumney",
+                to: _.map(boss.targets, function(target){
+                    return {
+                        email: target,
+                        name: boss.name,
                         type: "to"
-                    }
-                ]
+                    };
+                })
             };
             
             
         forwards.insert(boss, function(err, result) {
-        
-            mandrillClient.messages.send({ message: message, async: true});
+            if(err) {
+                callback(err);
+            }
+            else {
+                mandrillClient.messages.send({ message: message, async: true});
+                callback(null,result);
+            }
         });
         
         return boss;
           
     }
     
-    function createCity(city, boss) {
+    function createCity(forwards, city, boss, callback) {
         var cityEmail = createInternalEmail(city),
             citySlug  = cityEmail.split("@")[0],
+            city      = {
+                _id: citySlug,
+                name: city,
+                source: cityEmail,
+                targets: boss.targets,
+                bossName: boss.name
+            },
             message = {
-                text: Handlebars.templates.newCity({
-                    city: city,
-                    citySlug: citySlug,
-                    name: boss.name
-                }),
+                text: Handlebars.templates.newCity(city),
                 subject: "Created Nerd Nite City",
                 from_email: "web@nerdnite.com",
-                to: [
-                    {
-                        email: "dancrumb@gmail.com",
-                        name: "Dan Rumney",
-                        type: "to"
-                    }
-                ]
+                to: _.map(boss.targets, function(target){
+                    return {
+                            email: target,
+                            name: boss.name,
+                            type: "to"
+                        };
+                })
             };
-        
-        mandrillClient.messages.send({ message: message, async: true});
-        
+
+        forwards.insert(city, function(err, result) {
+            if(err) {
+                callback(err);
+            }
+            else {
+                mandrillClient.messages.send({ message: message, async: true});
+                callback(null,result);
+            }
+        });
     }
     
-    function addBossToCity(city, boss){
+    function addBossToCity(forwards, city, boss, callback){
         var cityEmail = createInternalEmail(city),
             citySlug  = cityEmail.split("@")[0],
+            city      = {
+                _id: citySlug,
+                name: city,
+                source: cityEmail,
+                targets: boss.targets,
+                bossName: boss.name
+            },
             message = {
-                text: Handlebars.templates.updateCity({
-                    city: city,
-                    citySlug: citySlug,
-                    name: boss.name
-                }),
-                subject: "Created Nerd Nite Boss",
+                text: Handlebars.templates.updateCity(city),
+                subject: "Updated Nerd Nite City",
                 from_email: "web@nerdnite.com",
-                to: [
-                    {
-                        email: "dancrumb@gmail.com",
-                        name: "Dan Rumney",
+                to: _.map(boss.targets, function(target){
+                    return {
+                        email: target,
+                        name: boss.name,
                         type: "to"
-                    }
-                ]
+                    };
+                })
             };
-        
-        mandrillClient.messages.send({ message: message, async: true});
-        
+
+        forwards.update(
+            {_id: city._id },
+            { $addToSet: { targets: { $each: city.targets }}},
+            function(err, result) {
+                if(err) {
+                    callback(err);
+                }
+                else {
+                    mandrillClient.messages.send({ message: message, async: true});
+                    callback(null,result);
+                }
+            }
+        );
     }
 
     options = getOptions(cliArgs);
@@ -195,8 +224,8 @@
     MongoClient.connect("mongodb://nerdnite:s4tgd1tw@nerdnite2.com/nerdnite",
         function(err, db) {
             var forwards,
-                errorOut = function (message) {
-                        console.error(message);
+                errorOut = function () {
+                        console.error.apply(console, arguments);
                         db.close();
                         process.exit(1);
                 };
@@ -229,20 +258,31 @@
                     if(results.externalEmailInUse) {
                         errorOut("'"+options.email+"' is already a target email");
                     }
-                    newBoss = createBoss(forwards, options.name, options.email);
-                    if(results.cityExists) {
-                        addBossToCity(city, newBoss);
-                    }
-                    else {
-                        createCity(city, newBoss);
-                    }
-                    db.close();
+                    newBoss = createBoss(forwards, options.name, options.email, function(err, result) {
+                        if(err) {
+                            errorOut("Could not create boss: ", err);
+                        }
+                        var callback = function (err, result) {
+                            if(err) {
+                                errorOut("Failed to update/create city: ", err);
+                            }
+                            else {
+                                console.log("Success");
+                            }
+
+                            db.close();
+                        }
+                        if(results.cityExists) {
+                            addBossToCity(forwards, city, newBoss, callback);
+                        }
+                        else {
+                            createCity(forwards, city, newBoss, callback);
+                        }
+
+                    });
+
                 });
-                
-                //db.close();
             }
         }
     );
-
-
 }());
