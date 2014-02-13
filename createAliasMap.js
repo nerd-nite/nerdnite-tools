@@ -12,6 +12,7 @@
     MongoClient.connect("mongodb://nerdnite:s4tgd1tw@nerdnite2.com/nerdnite",
         function(err, db) {
             var forwards,
+                bosses = [],
                 errorOut = function () {
                     console.error.apply(console, arguments);
                     db.close();
@@ -26,8 +27,15 @@
                 forwards.find({}).each( function (err, emailMap) {
                     if(!emailMap) {
                         db.close();
+                        console.log(Handlebars.templates.alias({
+                            targets: bosses,
+                            source: "bosses@nerdnite.com"
+                        }));
                     }
                     else {
+                        if(emailMap.type === "boss") {
+                            bosses.push(emailMap.targets[0]);
+                        }
                         console.log(Handlebars.templates.alias(emailMap));
                     }
                 });
