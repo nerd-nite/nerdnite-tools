@@ -113,7 +113,8 @@
                 _id: bossSlug,
                 name: name,
                 source: nnEmail,
-                targets: [ email ]
+                targets: [ email ],
+                type: "boss",
             },
             message = {
                 text: Handlebars.templates.newBoss(boss),
@@ -151,7 +152,8 @@
                 name: city,
                 source: cityEmail,
                 targets: boss.targets,
-                bossName: boss.name
+                bossName: boss.name,
+                type: "city"
             },
             message = {
                 text: Handlebars.templates.newCity(city),
