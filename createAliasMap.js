@@ -28,7 +28,7 @@
                     if(!emailMap) {
                         db.close();
                         console.log(Handlebars.templates.alias({
-                            targets: bosses,
+                            targets: bosses.sort(),
                             source: "bosses@nerdnite.com"
                         }));
                     }
