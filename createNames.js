@@ -11,12 +11,7 @@
     
     MongoClient.connect("mongodb://nerdnite:s4tgd1tw@nerdnite2.com/nerdnite",
         function(err, db) {
-            var forwards,
-                errorOut = function () {
-                        console.error.apply(console, arguments);
-                        db.close();
-                        process.exit(1);
-                };
+            var forwards;
                 
             if(err) {
                 console.error("Failed to connect: ", err);
@@ -26,23 +21,23 @@
                 forwards = db.collection("forwards");
                 forwards.find().each(function(err,fwd){
                     if(!fwd) {
-
                         db.close();
                         return;
                     }
-                   
-		    if(fwd.name) {
-                console.log("Already have a name for "+
-fwd.name);
-            }
-            else {
-                var newName = fwd._id.split(".").join(" ");
-                forwards.update(fwd, { $set: { name: newName } }, function (err,result){
-                    if(err) {
-                        console.error("ERR:",error);
+                    if(fwd.name) {
+                        console.log("Already have a name for "+fwd.name);
                     }
                     else {
-                        console.log("Success:", result);
+                        var newName = fwd._id.split(".").join(" ");
+                        forwards.update(fwd, { $set: { name: newName } }, function (err,result){
+                            if(err) {
+                                console.error("ERR:", err);
+                            }
+                            else {
+                                console.log("Success:", result);
+                            }
+                        }
+                        );
                     }
                 });
             }
