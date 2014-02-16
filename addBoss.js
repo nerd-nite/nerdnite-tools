@@ -73,21 +73,25 @@
         console.log(Handlebars.templates.confirm(options));
     }
     
-    function createInternalEmail(email) {
+    function createSlug(email) {
         var internalEmail = email.trim().toLowerCase();
-        return internalEmail.replace(/[^a-zA-Z0-9]+/g, ".") + "@nerdnite.com";
+        return internalEmail.replace(/[^a-zA-Z0-9]+/g, ".");
     }
     
-    function internalEmailInUse(email, forwards, callback) {
-        return forwards.find({"source": email}).toArray(function (err, items) {
-            if(err) {
-                console.error("Problem searching for items: ", err);
-                callback(err);
+    function slugInUse(slug, collection, callback) {
+        return collection.find({ $or : [
+                { _id: slug},
+                { aliases: slug}
+            ]}).toArray(function (err, items) {
+                if(err) {
+                    console.error("Problem searching for items: ", err);
+                    callback(err);
+                }
+                else {
+                    callback(null, items.length > 0); 
+                }
             }
-            else {
-                callback(null, items.length > 0); 
-            }
-        });
+        );
     }
     
     function externalEmailInUse(email, forwards, callback) {
@@ -102,35 +106,30 @@
         });
     }
     
-    function cityExists(city, forwards, callback) {
-        internalEmailInUse(createInternalEmail(city),forwards, callback);
+    function cityExists(city, cities, callback) {
+        slugInUse(createSlug(city), cities, callback);
     }
     
-    function createBoss(forwards, name, email, callback) {
-        var nnEmail     = createInternalEmail(name),
-            bossSlug    = nnEmail.split("@")[0],
+    function createBoss(bosses, name, email, callback) {
+        var bossSlug     = createSlug(name),
             boss = {
                 _id: bossSlug,
                 name: name,
-                source: nnEmail,
-                targets: [ email ],
-                type: "boss",
+                email: email
             },
             message = {
                 text: Handlebars.templates.newBoss(boss),
                 subject: "Created Nerd Nite Boss",
                 from_email: "web@nerdnite.com",
-                to: _.map(boss.targets, function(target){
-                    return {
-                        email: target,
-                        name: boss.name,
+                to: {
+                        email: boss.email,
+                        name:  boss.name,
                         type: "to"
-                    };
-                })
+                }
             };
             
             
-        forwards.insert(boss, function(err, result) {
+        bosses.insert(boss, function(err, result) {
             if(err) {
                 callback(err);
             }
@@ -144,31 +143,25 @@
           
     }
     
-    function createCity(forwards, city, boss, callback) {
-        var cityEmail = createInternalEmail(city),
-            citySlug  = cityEmail.split("@")[0],
+    function createCity(cities, cityName, boss, callback) {
+        var citySlug = createSlug(cityName),
             city      = {
                 _id: citySlug,
-                name: city,
-                source: cityEmail,
-                targets: boss.targets,
-                bossName: boss.name,
-                type: "city"
+                name: cityName,
+                bosses: [ boss._id ]
             },
             message = {
-                text: Handlebars.templates.newCity(city),
+                text: Handlebars.templates.newCity({ city: city, boss: boss}),
                 subject: "Created Nerd Nite City",
                 from_email: "web@nerdnite.com",
-                to: _.map(boss.targets, function(target){
-                    return {
-                            email: target,
-                            name: boss.name,
-                            type: "to"
-                        };
-                })
+                to: {
+                        email: boss.email,
+                        name: boss.name,
+                        type: "to"
+                }
             };
 
-        forwards.insert(city, function(err, result) {
+        cities.insert(city, function(err, result) {
             if(err) {
                 callback(err);
             }
@@ -181,18 +174,14 @@
         });
     }
     
-    function addBossToCity(forwards, city, boss, callback){
-        var cityEmail = createInternalEmail(city),
-            citySlug  = cityEmail.split("@")[0],
+    function addBossToCity(cities, cityName, boss, callback){
+        var citySlug = createSlug(cityName),
             city      = {
                 _id: citySlug,
-                name: city,
-                source: cityEmail,
-                targets: boss.targets,
-                bossName: boss.name
+                name: city
             },
             message = {
-                text: Handlebars.templates.updateCity(city),
+                text: Handlebars.templates.updateCity({ city: city, boss: boss}),
                 subject: "Updated Nerd Nite City",
                 from_email: "web@nerdnite.com",
                 to: _.map(boss.targets, function(target){
@@ -204,9 +193,9 @@
                 })
             };
 
-        forwards.update(
+        cities.update(
             {_id: city._id },
-            { $addToSet: { targets: { $each: city.targets }}},
+            { $push: { bosses: boss._id } },
             function(err, result) {
                 if(err) {
                     callback(err);
@@ -225,7 +214,8 @@
     
     MongoClient.connect("mongodb://nerdnite:s4tgd1tw@nerdnite2.com/nerdnite",
         function(err, db) {
-            var forwards,
+            var bosses = !db ? null : db.collection("bosses"),
+                cities = !db ? null : db.collection("cities"),
                 errorOut = function () {
                         console.error.apply(console, arguments);
                         db.close();
@@ -237,29 +227,36 @@
             }
             else {
                 console.info("Connected to DB");
-                forwards = db.collection("forwards");
-                var internalEmail = createInternalEmail(options.name);
+                
+                var slug = createSlug(options.name);
                 async.parallel({
                     internalEmailInUse: function(callback) {
-                        internalEmailInUse(internalEmail, forwards, callback);
+                        async.parallel({
+                            usedByCity: _.partial(slugInUse, slug, cities),
+                            usedByBoss: _.partial(slugInUse, slug, bosses)
+                            },
+                            function (err, results) {
+                                callback(results.usedByCity && results.usedByBoss);
+                            }
+                        );
                     },
                     externalEmailInUse: function(callback) {
-                        externalEmailInUse(options.email, forwards, callback);
+                        externalEmailInUse(options.email, bosses, callback);
                     },
                     cityExists: function(callback) {
-                        cityExists(options.city, forwards, callback);
+                        cityExists(options.city, cities, callback);
                     }
                 },
                 function(err, results) {
                     var newBoss,
                         city = options.city;
                     if(results.internalEmailInUse) {
-                        errorOut("'"+internalEmail+"' is already in use");
+                        errorOut("'"+slug+"' is already in use");
                     }
                     if(results.externalEmailInUse) {
                         errorOut("'"+options.email+"' is already a target email");
                     }
-                    newBoss = createBoss(forwards, options.name, options.email, function(err, result) {
+                    newBoss = createBoss(bosses, options.name, options.email, function(err, result) {
                         if(err) {
                             errorOut("Could not create boss: ", err);
                         }
@@ -274,10 +271,10 @@
                             db.close();
                         }
                         if(results.cityExists) {
-                            addBossToCity(forwards, city, newBoss, callback);
+                            addBossToCity(cities, city, newBoss, callback);
                         }
                         else {
-                            createCity(forwards, city, newBoss, callback);
+                            createCity(cities, city, newBoss, callback);
                         }
 
                     });
