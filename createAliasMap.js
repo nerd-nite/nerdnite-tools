@@ -74,7 +74,7 @@
                     _.partial(createBossAliases, bosses),
                     _.partial(createCityAliases, cities)
                 ], function(err, results) {
-                    console.log("null@nerdnite.com nn.dan.rumney@gmail.com")
+                    console.log("null@nerdnite.com nn.dan.rumney@gmail.com");
                     db.close();
                 })
             }
