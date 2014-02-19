@@ -107,7 +107,7 @@
     }
     
     function cityExists(city, cities, callback) {
-        slugInUse(createSlug(city), cities, callback);
+        return slugInUse(createSlug(city), cities, callback);
     }
     
     function createBoss(bosses, name, email, callback) {
@@ -121,11 +121,11 @@
                 text: Handlebars.templates.newBoss(boss),
                 subject: "Created Nerd Nite Boss",
                 from_email: "web@nerdnite.com",
-                to: {
+                to: [{
                         email: boss.email,
                         name:  boss.name,
                         type: "to"
-                }
+                }]
             };
             
             
@@ -154,11 +154,11 @@
                 text: Handlebars.templates.newCity({ city: city, boss: boss}),
                 subject: "Created Nerd Nite City",
                 from_email: "web@nerdnite.com",
-                to: {
+                to: [{
                         email: boss.email,
                         name: boss.name,
                         type: "to"
-                }
+                }]
             };
 
         cities.insert(city, function(err, result) {
@@ -184,13 +184,11 @@
                 text: Handlebars.templates.updateCity({ city: city, boss: boss}),
                 subject: "Updated Nerd Nite City",
                 from_email: "web@nerdnite.com",
-                to: _.map(boss.targets, function(target){
-                    return {
-                        email: target,
+                to: [{
+                        email: boss.email,
                         name: boss.name,
                         type: "to"
-                    };
-                })
+                }]
             };
 
         cities.update(
@@ -236,7 +234,7 @@
                             usedByBoss: _.partial(slugInUse, slug, bosses)
                             },
                             function (err, results) {
-                                callback(results.usedByCity && results.usedByBoss);
+                                callback(null, results.usedByCity || results.usedByBoss);
                             }
                         );
                     },
@@ -250,6 +248,10 @@
                 function(err, results) {
                     var newBoss,
                         city = options.city;
+                        console.log(results);
+                    if(err) {
+                        errorOut("Unexpected error: ", err);
+                    }
                     if(results.internalEmailInUse) {
                         errorOut("'"+slug+"' is already in use");
                     }
@@ -276,9 +278,7 @@
                         else {
                             createCity(cities, city, newBoss, callback);
                         }
-
                     });
-
                 });
             }
         }
