@@ -22,6 +22,7 @@
         Getopt          = require("node-getopt"),
         async           = require("async"),
         Mandrill        = require('mandrill-api/mandrill').Mandrill,
+        fs              = require("fs"),
         
         mandrillClient  = new Mandrill('16rUK74RBFiacFNfmu_2sA'),
         getopt          = new Getopt([
@@ -31,7 +32,23 @@
                             [ "h", "help"]
                         ]),
         cliArgs         = process.argv.slice(2),
+        updatesFileName = timestamp()+".updates.sh",
         options;
+
+    function timestamp() {
+        var date = new Date(),
+            year = date.getFullYear(),
+            month = date.getMonth() + 1,
+            day= date.getDate();
+
+        if(month <= 9)
+            month = '0'+month;
+
+        if(day <= 9)
+            day = '0'+day;
+
+        return year +''+ month +''+ day;
+    }
         
     function usage(messages) {
         var rc = 0;
@@ -166,14 +183,14 @@
                 callback(err);
             }
             else {
-                console.log(Handlebars.templates.newWPCity(city));
-                console.log(Handlebars.templates.newWPBoss({boss: boss, city: city}));
+                fs.appendFileSync(updatesFileName, Handlebars.templates.newWPCity(city));
+                fs.appendFileSync(updatesFileName, Handlebars.templates.newWPBoss({boss: boss, city: city}));
                 mandrillClient.messages.send({ message: message, async: true}, function(result) {
-                    callback(null, result);
-                },
-                function(error) {
-                    callback(error);
-                });
+                        callback(null, result);
+                    },
+                    function(error) {
+                        callback(error);
+                    });
             }
         });
     }
@@ -203,7 +220,7 @@
                     callback(err);
                 }
                 else {
-                    console.log(Handlebars.templates.newWPBoss({boss: boss, city: city}));
+                    fs.appendFileSync(updatesFileName, Handlebars.templates.newWPBoss({boss: boss, city: city}))
                     mandrillClient.messages.send({ message: message, async: true});
                     callback(null,result);
                 }
