@@ -1,26 +1,27 @@
 {
-  "name": "nerdnite-tools",
-  "version": "0.0.9",
-  "description": "Tools for administering the Nerd Nite web server",
-  "main": " ",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "templates": "handlebars -c handlebars templates/ -f templates.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/dancrumb/nerdnite-tools.git"
-  },
-  "keywords": [
-    "Nerd",
-    "Nite"
-  ],
-  "author": "Dan Rumney <dan@nerdnite.com>",
-  "license": "BSD-2-Clause",
-  "bugs": {
+    "name": "nerdnite-tools",
+    "version": "1.1.0",
+    "description": "Tools for administering the Nerd Nite web server",
+    "main": " ",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "templates": "handlebars -c handlebars templates/ -f templates.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/dancrumb/nerdnite-tools.git"
+    },
+    "keywords": [
+        "Nerd",
+        "Nite"
+    ],
+    "author": "Dan Rumney <dan@nerdnite.com>",
+    "license": "Private",
+    "private":true,
+    "bugs": {
     "url": "https://github.com/dancrumb/nerdnite-tools/issues"
-  },
-  "dependencies": {
+    },
+    "dependencies": {
     "lodash": "~2.2.1",
     "handlebars": "~1.0.12",
     "mandrill-api": "~1.0.37",
@@ -29,5 +30,5 @@
     "prompt": "~0.2.12",
     "async": "~0.2.10",
     "colors": "~0.6.2"
-  }
+    }
 }

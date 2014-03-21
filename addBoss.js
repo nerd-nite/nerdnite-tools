@@ -168,8 +168,12 @@
             else {
                 console.log(Handlebars.templates.newWPCity(city));
                 console.log(Handlebars.templates.newWPBoss({boss: boss, city: city}));
-                mandrillClient.messages.send({ message: message, async: true});
-                callback(null,result);
+                mandrillClient.messages.send({ message: message, async: true}, function(result) {
+                    callback(null, result);
+                },
+                function(error) {
+                    callback(error);
+                });
             }
         });
     }
