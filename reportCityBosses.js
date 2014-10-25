@@ -15,7 +15,7 @@
         mandrillClient  = new Mandrill('16rUK74RBFiacFNfmu_2sA');
         
     
-    MongoClient.connect("mongodb://nerdnite:s4tgd1tw@nerdnite2.com/nerdnite",
+    MongoClient.connect("mongodb://nerdnite:s4tgd1tw@mail.nerdnite2.com/nerdnite",
         function(err, db) {
             var cities = db ? db.collection("cities") : null,
                 bosses = db ? db.collection("bosses") : null,

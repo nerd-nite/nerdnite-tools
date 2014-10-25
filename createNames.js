@@ -9,7 +9,7 @@
         _               = require("lodash");
         
     
-    MongoClient.connect("mongodb://nerdnite:s4tgd1tw@nerdnite2.com/nerdnite",
+    MongoClient.connect("mongodb://nerdnite:s4tgd1tw@mail.nerdnite2.com/nerdnite",
         function(err, db) {
             var forwards;
                 
