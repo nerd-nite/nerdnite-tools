@@ -173,4 +173,5 @@ email_aliases
 love_aliases
 
 templates.js
-*.updates.sh
+*.updates.sh*
+typescript
