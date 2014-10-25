@@ -33,7 +33,7 @@
     
     function createCityAliases(cities, bossMap, ccaCallback) {
         cities.find({}).each(function (err, city) {
-            var bossEmails;
+            var bossEmails = [];
             if(err) {
                 ccaCallback(err);
             }
@@ -41,10 +41,15 @@
                 ccaCallback();
             }
             else {
-                bossEmails = _.map(city.bosses, function(bossId) {
-                    return bossMap[bossId] || bossId;
-                });
-                if(bossEmails.length === 0) {
+                if(city.email) {
+                    bossEmails = [city.email];
+                } else if (city.bosses) {
+                    bossEmails = _.map(city.bosses, function (bossId) {
+                        return bossMap[bossId] || bossId;
+                    });
+                }
+
+                if (bossEmails.length === 0) {
                     bossEmails = ["null@nerdnite.com"];
                 }
                 console.log(Handlebars.templates.bossAlias({
