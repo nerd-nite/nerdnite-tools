@@ -61,7 +61,7 @@
         
     }
 
-    MongoClient.connect("mongodb://nerdnite:s4tgd1tw@mail.nerdnite2.com/nerdnite",
+    MongoClient.connect("mongodb://nerdnite:s4tgd1tw@mail.nerdnite.com/nerdnite",
         function(err, db) {
             var bosses  = !db ? null : db.collection("bosses"),
                 cities  = !db ? null : db.collection("cities"),
