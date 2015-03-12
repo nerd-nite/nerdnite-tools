@@ -29,6 +29,7 @@
                             [ "n", "name=ARG",  "Name of the boss"],
                             [ "e", "email=ARG", "External email address"],
                             [ "c", "city=ARG",  "City that the boss runs"],
+                            [ "r", "reuseBoss", "Reuse a pre-existing boss" ],
                             [ "h", "help"]
                         ]),
         cliArgs         = process.argv.slice(2),
@@ -75,8 +76,11 @@
         if(!options.city) {
             messages.push("Please provide the name of the city. If it is more than one word, it will need to be in quotes");
         }
-        if(!options.email) {
-            messages.push("Please provide an external email address for the boss");
+        if(!options.email && !options.reuseBoss) {
+            messages.push("Please provide an external email address for the boss or indicate that you want to reuse a pre-existing boss");
+        }
+        if(options.email && options.reuseBoss) {
+            messages.push("You should not provide an external email address if you wish to reuse a boss");
         }
 
         if(messages.length > 0) {
@@ -127,7 +131,7 @@
         return slugInUse(createSlug(city), cities, callback);
     }
     
-    function createBoss(bosses, name, email, callback) {
+    function createBoss(bosses, name, email, reuseBoss, callback) {
         var bossSlug     = createSlug(name),
             boss = {
                 _id: bossSlug,
@@ -144,6 +148,10 @@
                         type: "to"
                 }]
             };
+
+        if(reuseBoss) {
+
+        } else {
             
             
         bosses.insert(boss, function(err, result) {
@@ -155,6 +163,7 @@
                 callback(null,result);
             }
         });
+        }
         
         return boss;
           
@@ -255,12 +264,16 @@
                             usedByBoss: _.partial(slugInUse, slug, bosses)
                             },
                             function (err, results) {
-                                callback(null, results.usedByCity || results.usedByBoss);
+                                callback(null, results.usedByCity || (results.usedByBoss && !options.reuseBoss));
                             }
                         );
                     },
                     externalEmailInUse: function(callback) {
-                        externalEmailInUse(options.email, bosses, callback);
+                        if(options.reuseBoss) {
+                            callback(null, true);
+                        } else {
+                            externalEmailInUse(options.email, bosses, callback);
+                        }
                     },
                     cityExists: function(callback) {
                         cityExists(options.city, cities, callback);
@@ -273,13 +286,13 @@
                     if(err) {
                         errorOut("Unexpected error: ", err);
                     }
-                    if(results.internalEmailInUse) {
+                    if(results.internalEmailInUse && !options.reuseBoss) {
                         errorOut("'"+slug+"' is already in use");
                     }
-                    if(results.externalEmailInUse) {
+                    if(results.externalEmailInUse && !options.reuseBoss) {
                         errorOut("'"+options.email+"' is already a target email");
                     }
-                    newBoss = createBoss(bosses, options.name, options.email, function(err, result) {
+                    newBoss = createBoss(bosses, options.name, options.email, options.reuseBoss, function(err, result) {
                         if(err) {
                             errorOut("Could not create boss: ", err);
                         }
