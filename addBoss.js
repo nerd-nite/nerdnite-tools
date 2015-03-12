@@ -154,6 +154,7 @@
                 if(err) {
                     callback(err);
                 } else if(bosses.length != 1) {
+                    console.log(boss);
                     callback("Not able to find one boss with that name");
                 } else {
                     callback(null, bosses[0]);
