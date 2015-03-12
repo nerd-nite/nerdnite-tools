@@ -150,7 +150,8 @@
             };
 
         if(reuseBoss) {
-            bosses.find(boss).toArray(function(err, bosses) {
+
+            bosses.find({ _id: boss._id }).toArray(function(err, bosses) {
                 if(err) {
                     callback(err);
                 } else if(bosses.length != 1) {
