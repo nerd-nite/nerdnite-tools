@@ -150,19 +150,26 @@
             };
 
         if(reuseBoss) {
+            bosses.find(boss).toArray(function(err, bosses) {
+                if(err) {
+                    callback(err);
+                } else if(bosses.length != 1) {
+                    callback("Not able to find one boss with that name");
+                } else {
+                    callback(null, bosses[0]);
+                }
+            });
 
         } else {
-            
-            
-        bosses.insert(boss, function(err, result) {
-            if(err) {
-                callback(err);
-            }
-            else {
-                mandrillClient.messages.send({ message: message, async: true});
-                callback(null,result);
-            }
-        });
+            bosses.insert(boss, function(err, result) {
+                if(err) {
+                    callback(err);
+                }
+                else {
+                    mandrillClient.messages.send({ message: message, async: true});
+                    callback(null,result);
+                }
+            });
         }
         
         return boss;
@@ -229,7 +236,7 @@
                     callback(err);
                 }
                 else {
-                    fs.appendFileSync(updatesFileName, Handlebars.templates.newWPBoss({boss: boss, city: city}))
+                    fs.appendFileSync(updatesFileName, Handlebars.templates.newWPBoss({boss: boss, city: city}));
                     mandrillClient.messages.send({ message: message, async: true});
                     callback(null,result);
                 }
@@ -305,7 +312,7 @@
                             }
 
                             db.close();
-                        }
+                        };
                         if(results.cityExists) {
                             addBossToCity(cities, city, newBoss, callback);
                         }
