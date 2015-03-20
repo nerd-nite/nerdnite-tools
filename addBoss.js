@@ -96,7 +96,7 @@
     
     function createSlug(email) {
         var internalEmail = email.trim().toLowerCase();
-        return internalEmail.replace(/[^-a-zA-Z0-9]+/g, ".");
+        return internalEmail.replace(/,/g, "").replace(/[^-a-zA-Z0-9]+/g, ".");
     }
     
     function slugInUse(slug, collection, callback) {
