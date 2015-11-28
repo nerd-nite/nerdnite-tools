@@ -34,7 +34,13 @@
                         ]),
         cliArgs         = process.argv.slice(2),
         updatesFileName = timestamp()+".updates.sh",
+        mongoHost       = process.env.MONGO_HOST,
         options;
+        
+    if(!mongoHost) {
+        console.error("No MONGO_HOST set");
+        process.exit();
+    }
 
     function timestamp() {
         var date = new Date(),
