@@ -9,7 +9,14 @@
         Handlebars      = require("handlebars"),
         templates       = require("./templates"),
         _               = require("lodash"),
+        mongoHost       = process.env.MONGO_HOST,
+
         async           = require("async");
+        
+    if(!mongoHost) {
+        console.error("No MONGO_HOST set");
+        process.exit();
+    }
         
         
     function createBossAliases(bosses, cbaCallback) {
@@ -61,7 +68,7 @@
         
     }
 
-    MongoClient.connect("mongodb://nerdnite:s4tgd1tw@mail.nerdnite.com/nerdnite",
+    MongoClient.connect("mongodb://nerdnite:s4tgd1tw@"+mongoHost+"/nerdnite",
         function(err, db) {
             var bosses  = !db ? null : db.collection("bosses"),
                 cities  = !db ? null : db.collection("cities"),
