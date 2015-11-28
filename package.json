@@ -1,34 +1,35 @@
 {
-    "name": "nerdnite-tools",
-    "version": "1.1.0",
-    "description": "Tools for administering the Nerd Nite web server",
-    "main": " ",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "templates": "handlebars -c handlebars templates/ -f templates.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/dancrumb/nerdnite-tools.git"
-    },
-    "keywords": [
-        "Nerd",
-        "Nite"
-    ],
-    "author": "Dan Rumney <dan@nerdnite.com>",
-    "license": "Private",
-    "private":true,
-    "bugs": {
+  "name": "nerdnite-tools",
+  "version": "1.1.0",
+  "description": "Tools for administering the Nerd Nite web server",
+  "main": " ",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "templates": "handlebars -c handlebars templates/ -f templates.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dancrumb/nerdnite-tools.git"
+  },
+  "keywords": [
+    "Nerd",
+    "Nite"
+  ],
+  "author": "Dan Rumney <dan@nerdnite.com>",
+  "license": "Private",
+  "private": true,
+  "bugs": {
     "url": "https://github.com/dancrumb/nerdnite-tools/issues"
-    },
-    "dependencies": {
-    "lodash": "~3.10.0",
+  },
+  "dependencies": {
+    "async": "~1.5.0",
+    "colors": "~1.1.2",
     "handlebars": "~4.0.5",
+    "kerberos": "0.0.17",
+    "lodash": "~3.10.0",
     "mandrill-api": "~1.0.37",
     "mongodb": "~2.0.49",
     "node-getopt": "~0.2.3",
-    "prompt": "*",
-    "async": "~1.5.0",
-    "colors": "~1.1.2"
-    }
+    "prompt": "*"
+  }
 }
