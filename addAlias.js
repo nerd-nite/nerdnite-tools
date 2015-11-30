@@ -86,9 +86,6 @@
         return options;
     }
 
-    function confirmOptions(options) {
-        console.log(Handlebars.templates.confirm(options));
-    }
 
     function createSlug(email) {
         var internalEmail = email.trim().toLowerCase();
@@ -129,8 +126,7 @@
     }
 
     options = getOptions(cliArgs);
-    confirmOptions(options);
-
+    console.log("Creating " +options.alias+ " alias for "+options.name);
     MongoClient.connect("mongodb://nerdnite:s4tgd1tw@"+mongoHost+"/nerdnite",
         function(err, db) {
             var bossColl = !db ? null : db.collection("bosses"),
@@ -166,6 +162,7 @@
                             errorOut("Unexpected error: ", err);
                         }
                         if(results.internalEmailInUse) {
+                            console.log("Creating alias");
                             createAlias(bossColl, options.name, options.alias, function (err, result) {
                                 if (err) {
                                     errorOut("Could not create boss: ", err);
@@ -173,10 +170,13 @@
                                 else {
                                     console.log("Success");
                                 }
+                                db.close();
                             });
                         } else {
                             errorOut("Could not find the boss: '"+slug+"'");
+                            db.close();
                         }
+
                     });
             }
         }
