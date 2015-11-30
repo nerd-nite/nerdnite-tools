@@ -133,8 +133,8 @@
 
     MongoClient.connect("mongodb://nerdnite:s4tgd1tw@"+mongoHost+"/nerdnite",
         function(err, db) {
-            var bosses = !db ? null : db.collection("bosses"),
-                cities = !db ? null : db.collection("cities"),
+            var bossColl = !db ? null : db.collection("bosses"),
+                cityColl = !db ? null : db.collection("cities"),
                 errorOut = function () {
                     console.error.apply(console, arguments);
                     db.close();
@@ -151,8 +151,8 @@
                 async.parallel({
                         internalEmailInUse: function(callback) {
                             async.parallel({
-                                    usedByCity: _.partial(slugInUse, slug, cities),
-                                    usedByBoss: _.partial(slugInUse, slug, bosses)
+                                    usedByCity: _.partial(slugInUse, slug, cityColl),
+                                    usedByBoss: _.partial(slugInUse, slug, bossColl)
                                 },
                                 function (err, results) {
                                     callback(null, results.usedByCity || (results.usedByBoss && !options.reuseBoss));
@@ -165,20 +165,18 @@
                         if(err) {
                             errorOut("Unexpected error: ", err);
                         }
-                        if(results.internalEmailInUse && !options.reuseBoss) {
-                            errorOut("'"+slug+"' is already in use");
+                        if(results.internalEmailInUse) {
+                            createAlias(bossColl, options.name, options.email, options.reuseBoss, function (err, result) {
+                                if (err) {
+                                    errorOut("Could not create boss: ", err);
+                                }
+                                else {
+                                    console.log("Success");
+                                }
+                            });
+                        } else {
+                            errorOut("Could not find the boss: '"+slug+"'");
                         }
-                        if(results.externalEmailInUse && !options.reuseBoss) {
-                            errorOut("'"+options.email+"' is already a target email");
-                        }
-                        createAlias(bosses, options.name, options.email, options.reuseBoss, function(err, result) {
-                            if(err) {
-                                errorOut("Could not create boss: ", err);
-                            }
-                            else {
-                                console.log("Success");
-                            }
-                        });
                     });
             }
         }
