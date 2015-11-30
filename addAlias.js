@@ -24,13 +24,10 @@
         mandrillClient  = new Mandrill('16rUK74RBFiacFNfmu_2sA'),
         getopt          = new Getopt([
             [ "n", "name=ARG",  "Name of the boss"],
-            [ "e", "email=ARG", "External email address"],
-            [ "c", "city=ARG",  "City that the boss runs"],
-            [ "r", "reuseBoss", "Reuse a pre-existing boss" ],
+            [ "a", "alias=ARG", "New Alias"],
             [ "h", "help"]
         ]),
         cliArgs         = process.argv.slice(2),
-        updatesFileName = timestamp()+".updates.sh",
         mongoHost       = process.env.MONGO_HOST,
         options;
 
