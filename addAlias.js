@@ -166,7 +166,7 @@
                             errorOut("Unexpected error: ", err);
                         }
                         if(results.internalEmailInUse) {
-                            createAlias(bossColl, options.name, options.email, options.reuseBoss, function (err, result) {
+                            createAlias(bossColl, options.name, options.alias, function (err, result) {
                                 if (err) {
                                     errorOut("Could not create boss: ", err);
                                 }
