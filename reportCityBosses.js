@@ -69,8 +69,7 @@
                                 };
                             })
                         };
-                        console.log("%j", message);
-                        //mandrillClient.messages.send({ message: message, async: true});
+                        mandrillClient.messages.send({ message: message, async: true});
                         console.log("Sent message about " + city.name);
                     }, this);
                     db.close();
