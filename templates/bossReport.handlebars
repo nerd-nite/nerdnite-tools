@@ -1,0 +1,32 @@
+Greetings {{name}},
+
+This is an email to report on your Nerd Nite email address(es)
+
+Every boss has a canonical email that they can choose to use, or not. Yours is: {{_id}}@nerdnite.com.
+
+Some bosses have aliases that they can also choose to use (or not).
+{{#if aliases}}
+You have the following: {{#aliases}}
+    * {{.}}@nerdnite.com{{/aliases}}
+{{else}}
+You do not have any.
+{{/if}}
+
+In addition, you are copied on all emails to the following city email addresses:
+{{#if cities}}
+{{#cities}}
+    * {{.}}@nerdnite.com
+{{/cities}}
+{{else}}
+    * None
+{{/if}}
+
+Please take a moment to check and confirm that these are the right addresses.
+Is anything missing?
+Are you included anywhere you shouldn't be?
+
+Let me know at dan@nerdnite.com and I'll fix it.
+
+Thanks,
+
+Dan

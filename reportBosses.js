@@ -49,29 +49,28 @@
                         errorOut(err);
                         return;
                     }
-                    
-                    var bossMap = _.object(_.pluck(results.bosses, '_id'), results.bosses);
 
-                    _.forEach(results.cities, function(city) {
-                        city.bosses = _.map(city.bosses, function (bossId) {
-                            var bossDetails = bossMap[bossId];
-                            return bossDetails ? bossDetails.email : bossId;
-                        });
-                        console.log(city);
+                    _.forEach(results.bosses, function(boss) {
+                        boss.cities = _(results.cities).filter( function (city) {
+                            return _.contains(city.bosses, boss._id);
+                        }).map(function (city) {
+                            return _.compact([city._id].concat(city.aliases));
+                        }).flatten().value();
+
+                        console.log(boss);
                         var message = {
-                            text: Handlebars.templates.cityReport(city),
-                            subject: "Nerd Nite City Report",
+                            text: Handlebars.templates.bossReport(boss),
+                            subject: "Nerd Nite Boss Report",
                             from_email: "web@nerdnite.com",
-                            to: _.map(city.bosses, function(boss){
-                                return {
-                                    email: boss,
+                            to: [{
+                                    email: boss._id+"@nerdnite.com",
                                     type: "to"
-                                };
-                            })
+
+                            }]
                         };
                         console.log("%j", message);
                         //mandrillClient.messages.send({ message: message, async: true});
-                        console.log("Sent message about " + city.name);
+                        console.log("Sent message about " + boss.name);
                     }, this);
                     db.close();
                 });
