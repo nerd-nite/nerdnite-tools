@@ -23,6 +23,8 @@
         async           = require("async"),
         Mandrill        = require('mandrill-api/mandrill').Mandrill,
         fs              = require("fs"),
+        createSlug      = require("slugger"),
+        timestamp       = require("timestamp"),
         
         mandrillClient  = new Mandrill('16rUK74RBFiacFNfmu_2sA'),
         getopt          = new Getopt([
@@ -42,21 +44,6 @@
         process.exit();
     }
 
-    function timestamp() {
-        var date = new Date(),
-            year = date.getFullYear(),
-            month = date.getMonth() + 1,
-            day= date.getDate();
-
-        if(month <= 9)
-            month = '0'+month;
-
-        if(day <= 9)
-            day = '0'+day;
-
-        return year +''+ month +''+ day;
-    }
-        
     function usage(messages) {
         var rc = 0;
         if(messages) {
@@ -98,11 +85,6 @@
 
     function confirmOptions(options) {
         console.log(Handlebars.templates.confirm(options));
-    }
-    
-    function createSlug(email) {
-        var internalEmail = email.trim().toLowerCase();
-        return internalEmail.replace(/,/g, "").replace(/[^-a-zA-Z0-9]+/g, ".");
     }
     
     function slugInUse(slug, collection, callback) {
@@ -160,7 +142,7 @@
             bosses.find({ _id: boss._id }).toArray(function(err, bosses) {
                 if(err) {
                     callback(err);
-                } else if(bosses.length != 1) {
+                } else if(bosses.length !== 1) {
                     console.log(boss);
                     callback("Not able to find one boss with that name");
                 } else {

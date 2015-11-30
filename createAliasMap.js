@@ -10,6 +10,7 @@
         templates       = require("./templates"),
         _               = require("lodash"),
         mongoHost       = process.env.MONGO_HOST,
+        blackList       = require("./bosses.blacklist.json"),
 
         async           = require("async");
         
@@ -17,7 +18,15 @@
         console.error("No MONGO_HOST set");
         process.exit();
     }
-        
+
+    function cleanBossMap(bossMap) {
+        var newMap = _.clone(bossMap);
+        var blackListedIds = _(blackList).values().flatten().value();
+        _.forEach(blackListedIds, function(id) {
+            delete newMap[id];
+        });
+        return newMap;
+    }
         
     function createBossAliases(bosses, cbaCallback) {
         var bossMap = {};
@@ -26,6 +35,7 @@
                 cbaCallback(err);
             }
             else if(!boss) {
+                bossMap = cleanBossMap(bossMap);
                 console.log(Handlebars.templates.bossesAlias({
                     emails: _.values(bossMap)
                 }));

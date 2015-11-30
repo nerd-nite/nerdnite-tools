@@ -24,6 +24,7 @@
   "dependencies": {
     "async": "~1.5.0",
     "colors": "~1.1.2",
+    "diacritics": "^1.2.3",
     "handlebars": "~4.0.5",
     "kerberos": "0.0.17",
     "lodash": "~3.10.0",
