@@ -20,8 +20,8 @@
         async           = require("async"),
         Mandrill        = require('mandrill-api/mandrill').Mandrill,
         fs              = require("fs"),
-        createSlug      = require("slugger"),
-        timestamp       = require("timestamp"),
+        createSlug      = require("./slugger"),
+        timestamp       = require("./timestamp"),
 
         mandrillClient  = new Mandrill('16rUK74RBFiacFNfmu_2sA'),
         getopt          = new Getopt([
