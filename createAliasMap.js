@@ -102,7 +102,9 @@
                     _.partial(createBossAliases, bosses),
                     _.partial(createCityAliases, cities)
                 ], function(err, results) {
-                    errorOut("Error creating aliases: "+ err);
+                    if(err) {
+                        errorOut("Error creating aliases: " + err);
+                    }
                     console.log("null@nerdnite.com nn.dan.rumney@gmail.com");
                     db.close();
                 });
