@@ -72,7 +72,13 @@
                 console.log(Handlebars.templates.bossAlias({
                     _id: city._id,
                     bossEmails: bossEmails
-                }))
+                }));
+                _.forEach(city.aliases, function(alias) {
+                    console.log(Handlebars.templates.bossAlias({
+                        _id: alias,
+                        bossEmails: bossEmails
+                    }));
+                });
             }
         });
         
@@ -96,9 +102,10 @@
                     _.partial(createBossAliases, bosses),
                     _.partial(createCityAliases, cities)
                 ], function(err, results) {
+                    errorOut("Error creating aliases: "+ err);
                     console.log("null@nerdnite.com nn.dan.rumney@gmail.com");
                     db.close();
-                })
+                });
             }
         }
     );
