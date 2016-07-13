@@ -13,17 +13,14 @@
 (function (){
     "use strict";
     var MongoClient     = require("mongodb").MongoClient,
-        Handlebars      = require("handlebars"),
         templates       = require("./templates"),
         _               = require("lodash"),
         Getopt          = require("node-getopt"),
         async           = require("async"),
-        Mandrill        = require('mandrill-api/mandrill').Mandrill,
         fs              = require("fs"),
         createSlug      = require("./slugger"),
         timestamp       = require("./timestamp"),
 
-        mandrillClient  = new Mandrill('16rUK74RBFiacFNfmu_2sA'),
         getopt          = new Getopt([
             [ "n", "name=ARG",  "Name of the boss"],
             [ "a", "alias=ARG", "New Alias"],
@@ -50,7 +47,7 @@
         process.exit(rc);
     }
 
-    function getOptions(args) {
+    function getOptions() {
         var input           = getopt.parse(cliArgs),
             options         = input.options,
             messages = [];
@@ -142,7 +139,7 @@
                         }
                         if(results.internalEmailInUse) {
                             console.log("Creating alias");
-                            createAlias(bossColl, options.name, options.alias, function (err, result) {
+                            createAlias(bossColl, options.name, options.alias, function (err) {
                                 if (err) {
                                     errorOut("Could not create boss: ", err);
                                 }

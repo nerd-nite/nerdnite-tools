@@ -14,7 +14,7 @@
 
         mongoHost       = process.env.MONGO_HOST,
 
-        mandrillClient  = new Mandrill('16rUK74RBFiacFNfmu_2sA');
+      mandrillClient  = new Mandrill('nvspEmFm9L67h97o_-covg');
 
     if(!mongoHost) {
         console.error("No MONGO_HOST set");

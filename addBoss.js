@@ -26,7 +26,7 @@
         createSlug      = require("./slugger"),
         timestamp       = require("./timestamp"),
         
-        mandrillClient  = new Mandrill('16rUK74RBFiacFNfmu_2sA'),
+        mandrillClient  = new Mandrill('nvspEmFm9L67h97o_-covg'),
         getopt          = new Getopt([
                             [ "n", "name=ARG",  "Name of the boss"],
                             [ "e", "email=ARG", "External email address"],
@@ -184,7 +184,7 @@
                 }]
             };
 
-        cities.insert(city, function(err, result) {
+        cities.insert(city, function(err) {
             if(err) {
                 callback(err);
             }
@@ -289,11 +289,11 @@
                     if(results.externalEmailInUse && !options.reuseBoss) {
                         errorOut("'"+options.email+"' is already a target email");
                     }
-                    newBoss = createBoss(bosses, options.name, options.email, options.reuseBoss, function(err, result) {
+                    newBoss = createBoss(bosses, options.name, options.email, options.reuseBoss, function(err) {
                         if(err) {
                             errorOut("Could not create boss: ", err);
                         }
-                        var callback = function (err, result) {
+                        var callback = function (err) {
                             if(err) {
                                 errorOut("Failed to update/create city: ", err);
                             }
