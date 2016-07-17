@@ -3,6 +3,7 @@ services:
 
 before_script:
   - mysql < ./sql/initialize.sql
+  - npm run-script templates
 
 env:
   global:
