@@ -71,7 +71,7 @@
   options = getOptions(cliArgs);
   
 
-  var adder = new BossAdder();
-  adder.run(options);
+  var bossAdder = new BossAdder();
+  bossAdder.run(options).finally(bossAdder.done);
 
 }());

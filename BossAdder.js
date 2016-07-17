@@ -203,5 +203,9 @@ BossAdder.prototype.run = function (options) {
           }
         }, errorReporter("Error trying to create boss"));
     })
-    .catch(errorReporter("Application error"));
+    .catch(errorReporter("BossAdder error"));
+};
+
+BossAdder.prototype.done = function () {
+  pool.end();
 };

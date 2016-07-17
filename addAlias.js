@@ -12,11 +12,8 @@
  */
 (function () {
   "use strict";
-  var pool = require("./dbPool"),
-    Promise = require("bluebird"),
+  var AliasAdder = require('./AliasAdder'),
     Getopt = require("node-getopt"),
-    createSlug = require("./slugger"),
-
     getopt = new Getopt([
       ["n", "name=ARG", "Name of the boss"],
       ["a", "alias=ARG", "New Alias"],
@@ -59,59 +56,14 @@
     return options;
   }
 
-  function slugInUse(slug) {
-    return Promise.all([
-      pool.query('SELECT COUNT(*) FROM boss WHERE _id = ?', [slug]),
-      pool.query('SELECT COUNT(*) FROM boss_alias WHERE alias = ?', [slug]),
-      pool.query('SELECT COUNT(*) FROM city WHERE _id = ?', [slug]),
-      pool.query('SELECT COUNT(*) FROM city_alias WHERE alias = ?', [slug])
-    ]).reduce(function (acc, result) {
-      return acc || result[0]['COUNT(*)'] > 0;
-    }, false);
-  }
-
-
-  function createAlias(name, alias) {
-    var bossAlias = {
-      alias: alias,
-      boss_id: createSlug(name)
-    };
-
-    return pool.query('INSERT INTO boss_alias SET ?', bossAlias);
-  }
-
   options = getOptions(cliArgs);
   console.log("Creating " + options.alias + " alias for " + options.name);
-  function errorOut() {
-    console.error.apply(console, arguments);
-    process.exit(1);
-  }
 
-
-  console.info("Connected to DB");
-
-  var slug = createSlug(options.name);
-
-  Promise.all([
-    slugInUse(slug),
-    slugInUse(options.alias)
-      ])
-    .spread(function(bossSlugInUse, aliasSlugInUse) {
-      if (bossSlugInUse && ! aliasSlugInUse) {
-        console.log("Creating alias");
-        return createAlias(options.name, options.alias)
-          .then(function() {
-            console.log("Success");
-          })
-          .catch(function (err) {
-            return errorOut("Could not create boss: ", err);
-          });
-      } else if(!bossSlugInUse) {
-        return errorOut("Could not find the boss: " + slug);
-      } else {
-        return errorOut("Alias already exists: " + options.alias);
-      }
-
+  var aliasAdder = new AliasAdder();
+  aliasAdder.run(options)
+    .catch(function(err) {
+      console.error("Error adding alias: " + err);
     })
-    .catch(errorOut);
+    .finally(aliasAdder.done);
+
 }());
