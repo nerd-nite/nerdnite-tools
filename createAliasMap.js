@@ -14,7 +14,7 @@
   require("./templates");
 
   var bosses = pool.query('SELECT * FROM boss');
-  var bossAliases = pool.query('SELECT * FROM boss_alias');
+  var bossAliasQuery = pool.query('SELECT * FROM boss_alias');
   var cities = pool.query('SELECT * FROM city;');
   var cityBosses = pool.query('SELECT * FROM boss_city');
   var cityAliases = pool.query('SELECT * FROM city_alias');
@@ -30,12 +30,13 @@
   }
 
   function createBossAliases() {
+    var bossAliasStrings = [];
     return bosses
       .then(function (bossRows) {
         var bossMap = {};
         bossRows.forEach(function (boss) {
           bossMap[boss._id] = boss.email;
-          console.log(Handlebars.templates.alias(boss));
+          bossAliasStrings.push(Handlebars.templates.alias(boss));
         });
         bossMap = cleanBossMap(bossMap);
         console.log(Handlebars.templates.bossesAlias({
@@ -46,23 +47,24 @@
         return bossMap;
       })
       .then(function (bossMap) {
-        return bossAliases
+        return bossAliasQuery
           .then(function (aliases) {
             aliases.forEach(function (alias) {
               var aliasInfo = {
                 _id: alias.alias,
                 email: bossMap[alias.boss_id]
               };
-              console.log(Handlebars.templates.alias(aliasInfo));
+              bossAliasStrings.push(Handlebars.templates.alias(aliasInfo));
             });
-            return bossMap;
+            return [bossMap, bossAliasStrings];
           });
       });
   }
 
-  function createCityAliases(bossMap) {
+  function createCityAliases(bossMap,bossAliasStrings) {
     var cityMap = {};
     var cityBossMap = {};
+    var cityAliasStrings = [];
     return cityBosses
       .then(function (cityBossRows) {
         cityBossRows.forEach(function (cityBossRow) {
@@ -87,7 +89,7 @@
           if (bossEmails.length === 0) {
             bossEmails = ["null@nerdnite.com"];
           }
-          console.log(Handlebars.templates.bossAlias({
+          cityAliasStrings.push(Handlebars.templates.bossAlias({
             _id: city._id,
             bossEmails: bossEmails
           }));
@@ -100,14 +102,14 @@
           aliases.forEach(function (alias) {
             var aliasInfo = {
               _id: alias.alias,
-              email: cityMap[alias.city_id]
+              bossEmails: cityMap[alias.city_id]
             };
-            console.log(Handlebars.templates.bossAlias(aliasInfo));
+            cityAliasStrings.push(Handlebars.templates.bossAlias(aliasInfo));
           });
         });
+        return [bossAliasStrings, cityAliasStrings];
       });
   }
-
 
   function errorOut() {
     console.error.apply(console, arguments);
@@ -116,10 +118,19 @@
   }
 
   createBossAliases()
-    .then(createCityAliases)
-    .then(function () {
+    .spread(createCityAliases)
+    .spread(function (bossAliases, cityAliases) {
+      _.uniq(bossAliases).sort().forEach(function (alias) {
+        console.log(alias);
+      });
       console.log("null@nerdnite.com nn.dan.rumney@gmail.com");
+      _.uniq(cityAliases).sort().forEach(function (alias) {
+        console.log(alias);
+      });
     })
-    .catch(errorOut);
+    .catch(errorOut)
+    .finally(function() {
+      pool.end();
+    });
 
 }());

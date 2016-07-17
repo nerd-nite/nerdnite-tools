@@ -36,6 +36,7 @@ DROP TABLE IF EXISTS `nerdnite`.`city` ;
 CREATE TABLE IF NOT EXISTS `nerdnite`.`city` (
   `_id` VARCHAR(255) NOT NULL,
   `name` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NULL,
   PRIMARY KEY (`_id`))
 ENGINE = InnoDB;
 

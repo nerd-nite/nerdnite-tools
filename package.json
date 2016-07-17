@@ -5,7 +5,8 @@
   "main": " ",
   "scripts": {
     "test": "ENVIRONMENT=test mocha",
-    "templates": "handlebars -m -c handlebars templates/ -f templates.js"
+    "templates": "handlebars -m -c handlebars templates/ -f templates.js",
+    "init-db": "mysql -h $DB_HOST -u $DB_USER -p$DB_PASS < ./sql/initialize.sql"
   },
   "repository": {
     "type": "git",

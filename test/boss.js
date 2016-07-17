@@ -13,12 +13,13 @@ var chai = require('chai'),
 chai.use(chaiAsPromised);
 
 describe('Boss', function () {
+  
   beforeEach('Reset the DB', function (done) {
     pool.query('SHOW TABLES').then(function (tableRows) {
-      console.log(tableRows);
       Promise.all(tableRows.map(function (row) {
         return pool.query('SET FOREIGN_KEY_CHECKS = 0;TRUNCATE ' + row.Tables_in_nerdnite + '; SET FOREIGN_KEY_CHECKS = 1;');
       })).then(function() {
+        console.log('DB Reset');
         done();
       }, done);
     });

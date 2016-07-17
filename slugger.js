@@ -14,8 +14,8 @@ function anglicizeUmlauts(s) {
     }) );
 }
 
-module.exports = function (email) {
-    var internalEmail = email.trim().toLowerCase();
+module.exports = function (name) {
+    var internalEmail = name.trim().toLowerCase();
     internalEmail = anglicizeUmlauts(internalEmail);
     internalEmail = removeDiacritics(internalEmail);
     return internalEmail.replace(/,/g, "").replace(/[^-a-zA-Z0-9]+/g, "");
