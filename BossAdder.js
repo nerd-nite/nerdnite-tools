@@ -152,12 +152,7 @@ function addBossToCity(cityName, boss, updatesFileName) {
 
 function sendMessage(message) {
   return new Promise(function (resolve, reject) {
-    if(process.env.ENVIRONMENT !== 'test') {
-      mandrillClient.messages.send({message: message, async: true}, resolve, reject);
-    } else {
-      console.log("Skipping emails because we're in TEST");
-      resolve();
-    }
+    mandrillClient.messages.send({message: message, async: true}, resolve, reject);
   });
 }
 

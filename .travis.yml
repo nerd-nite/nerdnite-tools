@@ -4,6 +4,12 @@ services:
 before_script:
   - mysql < ./sql/initialize.sql
 
+env:
+  global:
+    - secure: "Pbox8NXhWCziT8AoiCG0G7bGlUjReEpMS9F+1TCjXs1pWRFRTQbsWlolvtsNp53Hthn+l86+h+ukEwDiJfA9WI2Voll600mwNgNEZye8mmJGhy7lsX4OuGtltXnqqBmSBeMVslfw3HyWnCZWy16EqDtCvna0qR9So88GNc4r5PTwMkxESStbDrs8oEyFBUQtvO5jBT6iK56l1F0wPs06hflQjtRUCiGyfr7sYOOUMazfphA/CJ4rI55gGpGyoJpm46zdQOwhRitnAQOLs0mAxPLu/OXwQGlHG0XLr2aA5pkhA2NXNY/vNbEyRyPWKjupAPDBrQShhhbaY2UA6WVemBtUqHV1p6AlC+R8Jnw+23FvaY8Vy2/R4UGvNtJ8E14aYncWjsdd2CaDIbA1eRd1G/TfoHzGqqamEX5LRzqPgYaNw2ZWbE+/T1HgIRuD+CZ3FDPycsTJE7t5LakTmqUtTyW9Pjege4UJ7fkzJUvKQ9GUAPEYv5M08zIqeFCRkS5Tta4NFtR/AMCTsYDYKzSWAQaHS2L+TkGHa2ioKVzrwjN4OEZpImdkojc0fYFcI7rNoc7a3WG0E1t/NBCryA+7UhiOx4iRXPpK5I3FDWzD7zmuCZSG2ALEftCRqoS94dDEBxoi6mKjKDaFfxDVEQg1+K30/kADNt4FfvY3VyCn2II="
+    - DB_HOST: 127.0.0.1
+    - DB_USER: nerdnite
+    - DB_PASS: nerdnite
 
 language: node_js
 node_js:
