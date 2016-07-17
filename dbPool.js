@@ -4,7 +4,7 @@ var mysql = require("promise-mysql"),
   dbUser = process.env.DB_USER,
   dbPass = process.env.DB_PASS;
 
-if (!(dbHost && dbUser && dbPass)) {
+if (!(dbHost && dbUser)) {
   console.error("DB Inforamation not set");
   process.exit();
 }
