@@ -1,0 +1,10 @@
+services:
+  - mysql
+
+before_script:
+  - mysql < ./sql/initialize.sql
+
+
+language: node_js
+node_js:
+  - "5.11"
