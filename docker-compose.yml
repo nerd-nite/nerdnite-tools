@@ -6,7 +6,7 @@ services:
     environment:
           MYSQL_ROOT_PASSWORD: nerdnite
           MYSQL_DATABASE: nerdnite_bosses
-          MYSQL_USER: nerdnite
+          MYSQL_USER: nerdnite_bosses
           MYSQL_PASSWORD: nerdnite
     ports:
       - "3306:3306"

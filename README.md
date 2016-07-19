@@ -47,7 +47,7 @@ to see how it all fits together.
 You can run tests with
 
 ```
-DB_HOST=127.0.0.1 DB_USER=nerdnite DB_PASS=nerdnite MANDRILL_KEY=xxx npm test
+DB_HOST=127.0.0.1 DB_USER=nerdnite_bosses DB_PASS=nerdnite MANDRILL_KEY=xxx npm test
 ```
 
 This confirms that creating bosses and aliases is well behaved.
