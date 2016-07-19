@@ -23,6 +23,7 @@
     "url": "https://github.com/dancrumb/nerdnite-tools/issues"
   },
   "dependencies": {
+    "async": "^2.0.0",
     "bluebird": "^3.4.1",
     "colors": "~1.1.2",
     "diacritics": "^1.2.3",

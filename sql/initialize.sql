@@ -24,7 +24,9 @@ CREATE TABLE IF NOT EXISTS `nerdnite_bosses`.`boss` (
   `_id` VARCHAR(255) NOT NULL,
   `email` VARCHAR(255) NOT NULL,
   `name` VARCHAR(255) NULL,
-  PRIMARY KEY (`_id`))
+  `__old_id` VARCHAR(255) NULL,
+  PRIMARY KEY (`_id`),
+  UNIQUE INDEX `__old_id_UNIQUE` (`__old_id` ASC))
 ENGINE = InnoDB;
 
 
@@ -37,7 +39,9 @@ CREATE TABLE IF NOT EXISTS `nerdnite_bosses`.`city` (
   `_id` VARCHAR(255) NOT NULL,
   `name` VARCHAR(255) NOT NULL,
   `email` VARCHAR(255) NULL,
-  PRIMARY KEY (`_id`))
+  `__old_id` VARCHAR(255) NULL,
+  PRIMARY KEY (`_id`),
+  UNIQUE INDEX `__old_id_UNIQUE` (`__old_id` ASC))
 ENGINE = InnoDB;
 
 

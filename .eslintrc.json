@@ -10,7 +10,7 @@
   "globals": {},
   "rules": {
     "block-scoped-var": 2,
-    "camelcase": 2,
+    "camelcase": 0,
     "comma-style": [
       2,
       "first"
