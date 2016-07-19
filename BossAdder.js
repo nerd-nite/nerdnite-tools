@@ -99,7 +99,7 @@ function createCity(cityName, boss, updatesFileName) {
   var citySlug = createSlug(cityName)
     , city = {
       _id: citySlug
-      , ame: cityName
+      , name: cityName
     }
     , message = {
       text: Handlebars.templates.newCity({city: city, boss: boss})
