@@ -14,7 +14,7 @@ module.exports = mysql.createPool({
   host: dbHost
   , user: dbUser
   , password: dbPass
-  , database: 'nerdnite'
+  , database: 'nerdnite_bosses'
   , connectionLimit: 4
   , multipleStatements: process.env.ENVIRONMENT === 'test'
 });
