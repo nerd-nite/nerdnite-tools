@@ -11,6 +11,7 @@ env:
     - DB_HOST: 127.0.0.1
     - DB_USER: root
     - DB_PASS:
+    - ENVIRONMENT: test
 
 language: node_js
 node_js:
