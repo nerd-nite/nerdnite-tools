@@ -1,20 +1,20 @@
 #!/usr/bin/env node
+'use strict';
 /**
  * Report the Bosses associated with a city
  *
  */
 (function () {
-  "use strict";
-  var pool = require('./dbPool'),
-    Promise = require('bluebird'),
-    Handlebars = require("handlebars"),
 
-    _ = require("lodash"),
-    Mandrill = require('mandrill-api/mandrill').Mandrill,
+  var pool = require('./dbPool')
+    , Promise = require('bluebird')
+    , Handlebars = require('handlebars')
+    , _ = require('lodash')
 
-    mandrillClient = new Mandrill(process.env.MANDRILL_KEY);
+    , Mandrill = require('mandrill-api/mandrill').Mandrill
+    , mandrillClient = new Mandrill(process.env.MANDRILL_KEY);
 
-  require("./templates");
+  require('./templates');
 
   var bosses = pool.query('SELECT * FROM boss');
   var bossAliasQuery = pool.query('SELECT * FROM boss_alias');
@@ -24,9 +24,9 @@
   bosses.then(function (rows) {
     return Promise.all(rows.map(function (row) {
       var boss = {
-        _id: row._id,
-        name: row.name,
-        email: row.email
+        _id: row._id
+        , name: row.name
+        , email: row.email
       };
       return bossAliasQuery
         .then(function(aliasRows) {
@@ -60,13 +60,12 @@
         .then(function () {
           console.log(boss);
           var message = {
-            text: Handlebars.templates.bossReport(boss),
-            subject: "Nerd Nite Boss Report",
-            from_email: "web@nerdnite.com",
-            to: [{
-              email: boss._id + "@nerdnite.com",
-              type: "to"
-
+            text: Handlebars.templates.bossReport(boss)
+            , subject: 'Nerd Nite Boss Report'
+            , 'from_email': 'web@nerdnite.com'
+            , to: [{
+              email: boss._id + '@nerdnite.com'
+              , type: 'to'
             }]
           };
           console.log(message.text);
@@ -79,4 +78,4 @@
     .finally(function() {
       pool.end();
     });
-}());
+})();

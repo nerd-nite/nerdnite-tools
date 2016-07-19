@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+'use strict';
 /**
  * Add Nerd Nite Boss
  *
@@ -14,25 +15,23 @@
  *
  */
 (function () {
-  "use strict";
-  var Getopt = require("node-getopt"),
-    BossAdder = require('./BossAdder'),
-
-    getopt = new Getopt([
-      ["n", "name=ARG", "Name of the boss"],
-      ["e", "email=ARG", "External email address"],
-      ["c", "city=ARG", "City that the boss runs"],
-      ["r", "reuseBoss", "Reuse a pre-existing boss"],
-      ["h", "help"]
-    ]),
-    cliArgs = process.argv.slice(2),
-    options;
+  var Getopt = require('node-getopt')
+    , BossAdder = require('./BossAdder')
+    , getopt = new Getopt([
+    ['n', 'name=ARG', 'Name of the boss']
+    , ['e', 'email=ARG', 'External email address']
+    , ['c', 'city=ARG', 'City that the boss runs']
+    , ['r', 'reuseBoss', 'Reuse a pre-existing boss']
+    , ['h', 'help']
+  ])
+    , cliArgs = process.argv.slice(2)
+    , options;
 
   function usage(messages) {
     var rc = 0;
     if (messages) {
       messages.forEach(function (message) {
-        console.error("ERROR: " + message);
+        console.error('ERROR: ' + message);
       });
       rc = 1;
     }
@@ -41,37 +40,37 @@
   }
 
   function getOptions(args) {
-    var input = getopt.parse(args),
-      options = input.options,
-      messages = [];
-    if (options.help) {
+    var input = getopt.parse(args)
+      , inputOptions = input.options
+      , messages = [];
+    if (inputOptions.help) {
       usage();
     }
-    if (!options.name) {
-      messages.push("Please provide a name for the boss. It will need to be in quotes");
+    if (!inputOptions.name) {
+      messages.push('Please provide a name for the boss. It will need to be in quotes');
     }
-    if (!options.city) {
-      messages.push("Please provide the name of the city. If it is more than one word, it will need to be in quotes");
+    if (!inputOptions.city) {
+      messages.push('Please provide the name of the city. If it is more than one word, it will need to be in quotes');
     }
-    if (!options.email && !options.reuseBoss) {
-      messages.push("Please provide an external email address for the boss or indicate that you want to reuse a pre-existing boss");
+    if (!inputOptions.email && !inputOptions.reuseBoss) {
+      messages.push('Please provide an external email address for the boss or indicate that you want to reuse a pre-existing boss');
     }
-    if (options.email && options.reuseBoss) {
-      messages.push("You should not provide an external email address if you wish to reuse a boss");
+    if (inputOptions.email && inputOptions.reuseBoss) {
+      messages.push('You should not provide an external email address if you wish to reuse a boss');
     }
 
     if (messages.length > 0) {
       usage(messages);
     }
 
-    return options;
+    return inputOptions;
   }
 
-  
+
   options = getOptions(cliArgs);
-  
+
 
   var bossAdder = new BossAdder();
   bossAdder.run(options).finally(bossAdder.done);
 
-}());
+})();

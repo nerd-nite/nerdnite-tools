@@ -1,17 +1,17 @@
 #!/usr/bin/env node
+'use strict';
 /**
  * Creates a postfix alias map, based on the contents of the DB
  *
  */
 (function () {
-  "use strict";
-  var pool = require('./dbPool'),
-    Handlebars = require("handlebars"),
-    _ = require("lodash"),
+  var pool = require('./dbPool')
+    , Handlebars = require('handlebars')
+    , _ = require('lodash')
 
-    blackList = require("./bosses.blacklist.json");
+    , blackList = require('./bosses.blacklist.json');
 
-  require("./templates");
+  require('./templates');
 
   var bosses = pool.query('SELECT * FROM boss');
   var bossAliasQuery = pool.query('SELECT * FROM boss_alias');
@@ -51,8 +51,8 @@
           .then(function (aliases) {
             aliases.forEach(function (alias) {
               var aliasInfo = {
-                _id: alias.alias,
-                email: bossMap[alias.boss_id]
+                _id: alias.alias
+                , email: bossMap[alias.boss_id]
               };
               bossAliasStrings.push(Handlebars.templates.alias(aliasInfo));
             });
@@ -62,7 +62,6 @@
   }
 
   function createCityAliases(bossMap,bossAliasStrings) {
-    var cityMap = {};
     var cityBossMap = {};
     var cityAliasStrings = [];
     return cityBosses
@@ -76,6 +75,7 @@
         return cities;
       })
       .then(function (cityRows) {
+        var cityMap = {};
         cityRows.forEach(function (city) {
           var bossEmails = [];
           if (city.email) {
@@ -87,11 +87,11 @@
           }
 
           if (bossEmails.length === 0) {
-            bossEmails = ["null@nerdnite.com"];
+            bossEmails = ['null@nerdnite.com'];
           }
           cityAliasStrings.push(Handlebars.templates.bossAlias({
-            _id: city._id,
-            bossEmails: bossEmails
+            _id: city._id
+            , bossEmails: bossEmails
           }));
           cityMap[city._id] = bossEmails;
         });
@@ -101,8 +101,8 @@
         cityAliases.then(function (aliases) {
           aliases.forEach(function (alias) {
             var aliasInfo = {
-              _id: alias.alias,
-              bossEmails: cityMap[alias.city_id]
+              _id: alias.alias
+              , bossEmails: cityMap[alias.city_id]
             };
             cityAliasStrings.push(Handlebars.templates.bossAlias(aliasInfo));
           });
@@ -119,12 +119,12 @@
 
   createBossAliases()
     .spread(createCityAliases)
-    .spread(function (bossAliases, cityAliases) {
-      _.uniq(bossAliases).sort().forEach(function (alias) {
+    .spread(function (bossAliasStrings, cityAliasStrings) {
+      _.uniq(bossAliasStrings).sort().forEach(function (alias) {
         console.log(alias);
       });
-      console.log("null@nerdnite.com nn.dan.rumney@gmail.com");
-      _.uniq(cityAliases).sort().forEach(function (alias) {
+      console.log('null@nerdnite.com nn.dan.rumney@gmail.com');
+      _.uniq(cityAliasStrings).sort().forEach(function (alias) {
         console.log(alias);
       });
     })
@@ -133,4 +133,4 @@
       pool.end();
     });
 
-}());
+})();
