@@ -25,7 +25,7 @@ function mongoGetAll(coll) {
 MongoClient.connect('mongodb://nerdnite:s4tgd1tw@' + mongoHost + '/nerdnite',
   function (err, db) {
     var citiesColl = db ? db.collection('cities') : null
-      , bossesCol = db ? db.collection('bosses') : null;
+      , bossesColl = db ? db.collection('bosses') : null;
 
     if (err) {
       console.error('Failed to connect: ', err);
@@ -34,7 +34,7 @@ MongoClient.connect('mongodb://nerdnite:s4tgd1tw@' + mongoHost + '/nerdnite',
       console.info('Connected to MongoDB');
       async.parallel({
         cities: mongoGetAll(citiesColl)
-        , bosses: mongoGetAll(bossesCol)
+        , bosses: mongoGetAll(bossesColl)
       }, function (findError, results) {
         if (findError) {
           console.log(findError);
