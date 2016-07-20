@@ -1,80 +1,87 @@
 #!/usr/bin/env node
+'use strict';
 /**
  * Report the Bosses associated with a city
  *
  */
-(function (){
-    "use strict";
-    var MongoClient     = require("mongodb").MongoClient,
-        Handlebars      = require("handlebars"),
-        templates       = require("./templates"),
-        _               = require("lodash"),
-        Mandrill        = require('mandrill-api/mandrill').Mandrill,
-        async           = require("async"),
+(function () {
 
-        mongoHost       = process.env.MONGO_HOST,
+  var pool = require('./dbPool')
+    , Promise = require('bluebird')
+    , Handlebars = require('handlebars')
+    , _ = require('lodash')
 
-      mandrillClient  = new Mandrill('nvspEmFm9L67h97o_-covg');
+    , Mandrill = require('mandrill-api/mandrill').Mandrill
+    , mandrillClient = new Mandrill(process.env.MANDRILL_KEY);
 
-    if(!mongoHost) {
-        console.error("No MONGO_HOST set");
-        process.exit();
-    }
-        
-    
-    MongoClient.connect("mongodb://nerdnite:s4tgd1tw@"+mongoHost+"/nerdnite",
-        function(err, db) {
-            var cities = db ? db.collection("cities") : null,
-                bosses = db ? db.collection("bosses") : null,
-                errorOut = function () {
-                        console.error.apply(console, arguments);
-                        db.close();
-                        process.exit(1);
-                };
-                
-            if(err) {
-                console.error("Failed to connect: ", err);
-            }
-            else {
-                console.info("Connected to DB");
-                async.parallel( {
-                    cities: function(cb) {
-                        cities.find({}).toArray(cb);
-                    },
-                    bosses: function(cb) {
-                        bosses.find({}).toArray(cb);
-                    }
-                }, function(err,results){
-                    if(err) {
-                        errorOut(err);
-                        return;
-                    }
-                    
-                    var bossMap = _.object(_.pluck(results.bosses, '_id'), results.bosses);
+  require('./templates');
 
-                    _.forEach(results.cities, function(city) {
-                        city.bosses = _.map(city.bosses, function (bossId) {
-                            var bossDetails = bossMap[bossId];
-                            return bossDetails ? bossDetails.email : bossId;
-                        });
-                        console.log(city);
-                        var message = {
-                            text: Handlebars.templates.cityReport(city),
-                            subject: "Nerd Nite City Report",
-                            from_email: "web@nerdnite.com",
-                            to: _.map(city.bosses, function(boss){
-                                return {
-                                    email: boss,
-                                    type: "to"
-                                };
-                            })
-                        };
-                        mandrillClient.messages.send({ message: message, async: true});
-                        console.log("Sent message about " + city.name);
-                    }, this);
-                    db.close();
-                });
-            }
+  var bosses = pool.query('SELECT * FROM boss').then(function (rows) {
+    return _.keyBy(rows, '_id');
+  });
+  var cities = pool.query('SELECT * FROM city');
+  var cityAliases = pool.query('SELECT * FROM city_alias');
+  var cityBosses = pool.query('SELECT * FROM boss_city');
+
+  function getMapBuilder(from, to) {
+    return function (rows) {
+      var map = {};
+      rows.forEach(function (row) {
+        if(!map[row[from]]) {
+          map[row[from]] =  []
         }
-    );
-}());
+        map[row[from]].push(row[to]);
+      });
+      return map;
+    };
+  }
+
+
+  cityAliases.then(function (rows) {
+    var aliasMap = getMapBuilder('city_id', 'alias')(rows);
+
+    return Promise.all([
+      cities
+      , cityBosses
+      , bosses
+      , aliasMap
+    ]);
+  })
+    .spread(function (cityRows, cityBossRows, bossMap, aliasMap) {
+      var cityBossMap = getMapBuilder('city_id', 'boss_id')(cityBossRows);
+
+    cityRows.forEach(function (cityRow) {
+      var city = {
+        _id: cityRow._id
+        , name: cityRow.name
+        , email: cityRow.email
+      };
+      if(aliasMap[cityRow._id]) {
+        city.aliases = aliasMap[cityRow._id];
+      }
+      if(cityBossMap[cityRow._id]) {
+        city.bosses = cityBossMap[cityRow._id].map(function(bossId) {
+          return bossMap[bossId].email;
+        })
+      }
+
+      var message = {
+        text: Handlebars.templates.cityReport(city)
+        , subject: 'Nerd Nite City Report'
+        , 'from_email': 'web@nerdnite.com'
+        , to: _.map(city.bosses, function (boss) {
+          return {
+            email: boss
+            , type: 'to'
+          };
+        })
+      };
+      console.log(message.text);
+      mandrillClient.messages.send({message: message, async: true});
+      console.log('Sent message about ' + city.name);
+
+    });
+  }).finally(function() {
+    pool.end();
+  });
+})();

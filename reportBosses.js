@@ -1,79 +1,81 @@
 #!/usr/bin/env node
+'use strict';
 /**
  * Report the Bosses associated with a city
  *
  */
-(function (){
-    "use strict";
-    var MongoClient     = require("mongodb").MongoClient,
-        Handlebars      = require("handlebars"),
-        templates       = require("./templates"),
-        _               = require("lodash"),
-        Mandrill        = require('mandrill-api/mandrill').Mandrill,
-        async           = require("async"),
+(function () {
 
-        mongoHost       = process.env.MONGO_HOST,
+  var pool = require('./dbPool')
+    , Promise = require('bluebird')
+    , Handlebars = require('handlebars')
+    , _ = require('lodash')
 
-      mandrillClient  = new Mandrill('nvspEmFm9L67h97o_-covg');
+    , Mandrill = require('mandrill-api/mandrill').Mandrill
+    , mandrillClient = new Mandrill(process.env.MANDRILL_KEY);
 
-    if(!mongoHost) {
-        console.error("No MONGO_HOST set");
-        process.exit();
-    }
-        
-    
-    MongoClient.connect("mongodb://nerdnite:s4tgd1tw@"+mongoHost+"/nerdnite",
-        function(err, db) {
-            var cities = db ? db.collection("cities") : null,
-                bosses = db ? db.collection("bosses") : null,
-                errorOut = function () {
-                        console.error.apply(console, arguments);
-                        db.close();
-                        process.exit(1);
-                };
-                
-            if(err) {
-                console.error("Failed to connect: ", err);
-            }
-            else {
-                console.info("Connected to DB");
-                async.parallel( {
-                    cities: function(cb) {
-                        cities.find({}).toArray(cb);
-                    },
-                    bosses: function(cb) {
-                        bosses.find({}).toArray(cb);
-                    }
-                }, function(err,results){
-                    if(err) {
-                        errorOut(err);
-                        return;
-                    }
+  require('./templates');
 
-                    _.forEach(results.bosses, function(boss) {
-                        boss.cities = _(results.cities).filter( function (city) {
-                            return _.contains(city.bosses, boss._id);
-                        }).map(function (city) {
-                            return _.compact([city._id].concat(city.aliases));
-                        }).flatten().value();
+  var bosses = pool.query('SELECT * FROM boss');
+  var bossAliasQuery = pool.query('SELECT * FROM boss_alias');
+  var cityBosses = pool.query('SELECT * FROM boss_city');
+  var cityAliases = pool.query('SELECT * FROM city_alias');
 
-                        console.log(boss);
-                        var message = {
-                            text: Handlebars.templates.bossReport(boss),
-                            subject: "Nerd Nite Boss Report",
-                            from_email: "web@nerdnite.com",
-                            to: [{
-                                    email: boss._id+"@nerdnite.com",
-                                    type: "to"
+  bosses.then(function (rows) {
+    return Promise.all(rows.map(function (row) {
+      var boss = {
+        _id: row._id
+        , name: row.name
+        , email: row.email
+      };
+      return bossAliasQuery
+        .then(function(aliasRows) {
+          boss.aliases = aliasRows.filter(function(aliasRow) {
+            return aliasRow.boss_id === boss._id;
+          })
+            .map(function (aliasRow) {
+              return aliasRow.alias;
+            });
+          return cityBosses;
+        })
+        .then(function (cityBossRows) {
+          boss.cities = cityBossRows.filter(function(cityBossRow) {
+            return cityBossRow.boss_id === boss._id;
+          })
+            .map(function (cityBossRow) {
+              return cityBossRow.city_id;
+            });
+          return cityAliases;
+        })
+        .then(function (cityAliasRows) {
+          var bossCityAliases = cityAliasRows.filter(function (cityAliasRow) {
+            return _.contains(boss.cities, cityAliasRow.city_id);
+          })
+            .map(function (cityAliasRow) {
+              return cityAliasRow.alias;
+            });
 
-                            }]
-                        };
-                        mandrillClient.messages.send({ message: message, async: true});
-                        console.log("Sent message about " + boss.name);
-                    }, this);
-                    db.close();
-                });
-            }
-        }
-    );
-}());
+          boss.cities = boss.cities.concat(bossCityAliases);
+        })
+        .then(function () {
+          console.log(boss);
+          var message = {
+            text: Handlebars.templates.bossReport(boss)
+            , subject: 'Nerd Nite Boss Report'
+            , 'from_email': 'web@nerdnite.com'
+            , to: [{
+              email: boss._id + '@nerdnite.com'
+              , type: 'to'
+            }]
+          };
+          console.log(message.text);
+          return new Promise(function (resolve, reject) {
+            mandrillClient.messages.send({message: message, async: true}, resolve, reject);
+          });
+        })
+    }));
+  })
+    .finally(function() {
+      pool.end();
+    });
+})();
