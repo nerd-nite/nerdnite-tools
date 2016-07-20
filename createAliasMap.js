@@ -39,7 +39,7 @@
           bossAliasStrings.push(Handlebars.templates.alias(boss));
         });
         bossMap = cleanBossMap(bossMap);
-        console.log(Handlebars.templates.bossesAlias({
+        bossAliasStrings.push(Handlebars.templates.bossesAlias({
           emails: Object.keys(bossMap).map(function (id) {
             return bossMap[id];
           })
@@ -98,7 +98,7 @@
         return cityMap;
       })
       .then(function (cityMap) {
-        cityAliases.then(function (aliases) {
+        return cityAliases.then(function (aliases) {
           aliases.forEach(function (alias) {
             var aliasInfo = {
               _id: alias.alias
@@ -106,8 +106,8 @@
             };
             cityAliasStrings.push(Handlebars.templates.bossAlias(aliasInfo));
           });
+          return [bossAliasStrings, cityAliasStrings];
         });
-        return [bossAliasStrings, cityAliasStrings];
       });
   }
 

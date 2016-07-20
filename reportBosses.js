@@ -49,7 +49,7 @@
         })
         .then(function (cityAliasRows) {
           var bossCityAliases = cityAliasRows.filter(function (cityAliasRow) {
-            return _.contains(boss.cities, cityAliasRow.city_id);
+            return _.includes(boss.cities, cityAliasRow.city_id);
           })
             .map(function (cityAliasRow) {
               return cityAliasRow.alias;
