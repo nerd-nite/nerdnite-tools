@@ -87,8 +87,7 @@ function createBoss(name, email, reuseBoss) {
         throw new Error('Conflict with boss ID!');
       } else {
         return pool.query('INSERT INTO boss SET ?', boss).then(function () {
-          mandrillClient.messages.send({message: message, async: true});
-          return boss;
+          return sendMessage(message).then(function() { return boss; });
         });
       }
     });
@@ -152,12 +151,13 @@ function addBossToCity(cityName, boss, updatesFileName) {
 }
 
 function sendMessage(message) {
-  return new Promise(function (resolve, reject) {
+  return process.env.ENVIRONMENT === 'test' ? Promise.resolve() : new Promise(function (resolve, reject) {
     mandrillClient.messages.send({message: message, async: true}, resolve, reject);
   });
 }
 
 function confirmOptions(options) {
+  options.action = 'add';
   console.log(Handlebars.templates.confirm(options));
 }
 

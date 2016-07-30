@@ -7,7 +7,8 @@
     "test": "ENVIRONMENT=test npm run lint && mocha",
     "lint": "eslint *.js test/*.js",
     "templates": "handlebars -m -c handlebars templates/ -f templates.js",
-    "init-db": "mysql -h $DB_HOST -u $DB_USER -p$DB_PASS < ./sql/initialize.sql"
+    "init-db": "mysql -h $DB_HOST -u $DB_USER -p$DB_PASS < ./sql/initialize.sql",
+    "load-db": "for file in sql/snapshot/*; do mysql -h 127.0.0.1 -unerdnite_bosses -pnerdnite nerdnite_bosses < $file; done"
   },
   "repository": {
     "type": "git",

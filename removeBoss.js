@@ -1,27 +1,25 @@
 #!/usr/bin/env node
 'use strict';
 /**
- * Add Nerd Nite Boss
+ * Remove Nerd Nite Boss
  *
- * Creates a boss, adds it to a city and add it to the bosses list
+ * Removes a boss from a Nerd Nite City or from the entire system
  *
- * Input: Boss's name, personal email address and city
+ * Input: Boss's name and city name
  *
  * Outcomes:
- *  Boss's NN email already exists  - REJECT
- *  Bosses personal email exists    - REJECT
- *  City does not exists            - CREATE BOSS, CREATE CITY
- *  City exists                     - CREATE BOSS, ADD TO CITY
+ *  Boss's NN email doesn't exists  - REJECT
+ *  City does not exists            - REJECT
+ *  City exists (and is not system) - REMOVE BOSS FROM CITY
+ *  City is 'system'                - REMOVE BOSS FROM SYSTEM
  *
  */
 (function () {
   var Getopt = require('node-getopt')
-    , BossAdder = require('./BossAdder')
+    , BossRemover = require('./BossRemover')
     , getopt = new Getopt([
     ['n', 'name=ARG', 'Name of the boss']
-    , ['e', 'email=ARG', 'External email address']
-    , ['c', 'city=ARG', 'City that the boss runs']
-    , ['r', 'reuseBoss', 'Reuse a pre-existing boss']
+    , ['c', 'city=ARG', 'City to remove the boss from (or "system")']
     , ['h', 'help']
   ])
     , cliArgs = process.argv.slice(2)
@@ -46,17 +44,11 @@
     if (inputOptions.help) {
       usage();
     }
-    if (!inputOptions.name ) {
+    if (!inputOptions.name) {
       messages.push('Please provide a name for the boss. It will need to be in quotes');
     }
     if (!inputOptions.city) {
       messages.push('Please provide the name of the city. If it is more than one word, it will need to be in quotes');
-    }
-    if (!inputOptions.email && !inputOptions.reuseBoss) {
-      messages.push('Please provide an external email address for the boss or indicate that you want to reuse a pre-existing boss');
-    }
-    if (inputOptions.email && inputOptions.reuseBoss) {
-      messages.push('You should not provide an external email address if you wish to reuse a boss');
     }
 
     if (messages.length > 0) {
@@ -70,7 +62,18 @@
   options = getOptions(cliArgs);
 
 
-  var bossAdder = new BossAdder();
-  bossAdder.run(options).finally(bossAdder.done);
+  var bossRemover = new BossRemover();
+  bossRemover.run(options)
+    .catch(function (error) {
+      if(error.type && error.type === 'ZOMBIES') {
+        console.error('Some things have been left abandoned!');
+        error.errors.forEach(function(err) {
+          console.error(err);
+        });
+      } else {
+        console.log(error);
+      }
+    })
+    .finally(bossRemover.done);
 
 })();

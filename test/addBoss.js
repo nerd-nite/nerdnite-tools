@@ -15,15 +15,8 @@ chai.use(chaiAsPromised);
 
 describe('Boss', function () {
   
-  beforeEach('Reset the DB', function (done) {
-    pool.query('SHOW TABLES').then(function (tableRows) {
-      Promise.all(tableRows.map(function (row) {
-        return pool.query('SET FOREIGN_KEY_CHECKS = 0;TRUNCATE ' + row.Tables_in_nerdnite_bosses + '; SET FOREIGN_KEY_CHECKS = 1;');
-      })).then(function() {
-        console.log('DB Reset');
-        done();
-      }, done);
-    });
+  beforeEach('Reset the DB', function () {
+    return pool.purge();
   });
 
   it('can add a boss', function () {
