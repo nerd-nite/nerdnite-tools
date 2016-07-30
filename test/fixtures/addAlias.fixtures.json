@@ -1,0 +1,6 @@
+{
+  "bosses": [
+    {"_id": "testuser", "name": "Test User", "email": "test@example.com"},
+    {"_id": "testuser2", "name": "Test User2", "email": "test2@example.com"}
+  ]
+}

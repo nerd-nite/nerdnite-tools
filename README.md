@@ -34,7 +34,7 @@ or from Dan or Laura. It's a test key, so no emails will go out. Huzzah.
 Once the DB is started, you should run
 
 ```
-DB_HOST=127.0.0.1 DB_USER=nerdnite DB_PASS=nerdnite npm run-script init-db
+DB_HOST=127.0.0.1 DB_USER=nerdnite_bosses DB_PASS=nerdnite npm run-script init-db
 ```
 
 to set up the database.

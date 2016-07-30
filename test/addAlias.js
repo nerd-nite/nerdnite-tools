@@ -5,6 +5,7 @@
 var chai = require('chai')
   , expect = chai.expect
   , chaiAsPromised = require('chai-as-promised')
+  , fixtures = require('./fixtures/addAlias.fixtures.json')
   , pool = require('../dbPool')
   , Promise = require('bluebird')
   , AliasAdder = require('../AliasAdder');
@@ -13,21 +14,11 @@ chai.use(chaiAsPromised);
 
 describe('Alias', function () {
 
-  beforeEach('Reset the DB', function (done) {
-    pool.query('SHOW TABLES').then(function (tableRows) {
-      Promise.all(tableRows.map(function (row) {
-        return pool.query('SET FOREIGN_KEY_CHECKS = 0;TRUNCATE ' + row.Tables_in_nerdnite_bosses + '; SET FOREIGN_KEY_CHECKS = 1;');
-      })).then(function() {
+  beforeEach('Reset the DB', function () {
+    return pool.purge().then(function() {
         console.log('DB Reset');
-        return Promise.all([
-          pool.query('INSERT INTO boss SET ?', { _id: 'testuser', name: 'Test User', email: 'test@example.com'})
-          , pool.query('INSERT INTO boss SET ?', { _id: 'testuser2', name: 'Test User2', email: 'test@example.com'})
-            ])
-          .then(function() {
-            done();
-          });
-      }, done);
-    });
+        return pool.loadFixtures(fixtures);
+      });
   });
 
   it('can add an alias', function () {

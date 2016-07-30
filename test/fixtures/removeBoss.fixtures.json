@@ -1,0 +1,22 @@
+{
+  "bosses": [
+    {"_id": "testuser1", "name": "Test User1", "email": "test1@example.com"},
+    {"_id": "testuser2", "name": "Test User2", "email": "test2@example.com"},
+    {"_id": "testuser3", "name": "Test User3", "email": "test3@example.com"},
+    {"_id": "testuser4", "name": "Test User4", "email": "test4@example.com"}
+  ],
+  "cities": [
+    {"_id": "testcity1", "name": "Test City1"},
+    {"_id": "testcity2", "name": "Test City2"},
+    {"_id": "testcity3", "name": "Test City3"},
+    {"_id": "testcity4", "name": "Test City4"}
+  ],
+  "bossCityMappings": [
+    {"boss_id": "testuser1", "city_id": "testcity1"},
+    {"boss_id": "testuser2", "city_id": "testcity1"},
+    {"boss_id": "testuser3", "city_id": "testcity2"},
+    {"boss_id": "testuser4", "city_id": "testcity3"},
+    {"boss_id": "testuser4", "city_id": "testcity4"},
+    {"boss_id": "testuser4", "city_id": "testcity1"}
+  ]
+}
